@@ -10,34 +10,127 @@ output:
 
 ```{r setup, include=FALSE}
 # set up
-knitr::opts_chunk$set(echo=TRUE,out.width="0.9\\linewidth",dev="png",fig.align='center')
-pacman::p_load(
-ggplot2,
-knitr,
-arm,
-data.table,
-stringr,
-rstan,
-rstanarm,
-)
+knitr::opts_chunk$set(echo=TRUE,
+                      out.width="0.9\\linewidth",
+                      dev="png",
+                      fig.align='center',
+                      message = FALSE,
+                      warning = FALSE)
+pacman::p_load(ggplot2,
+               knitr,
+               arm,
+               data.table,
+               stringr,
+               rstan,
+               rstanarm,
+               readr,
+               tidyverse)
 ```
 
 ```{r,echo=FALSE}
 CO2 <- read.csv("CO2EmissionsCanada.csv", header = T)
 ```
 
+## Abstract
 
+xxx 
 
-```{r,echo=FALSE}
+## Introduction
+
+xxx
+
+## Method
+
+### Data Cleaning and Processing
+
+xxx
+
+| column names      | explanation |
+| :--:              | :----- |
+| title             | The title of talk|
+| num_lang          | The number of available languages translations |
+| comments          | The number of comments |
+| duration_ted      | How long is the  video in  seconds |
+| view_ted          | The number of views |
+| categories        | The video was under which category on YouTube|
+| english           | Indicate the native language is English or not|
+
+xxx
+
+### Exploratory Data Analysis
+
+```{r, echo=FALSE}
+
+```
+
+xxx  
+
+```{r, echo=FALSE, fig.height=4, fig.width= 10,fig.cap="xxx"}
+ggplot
+```
+
+### Model Fitting
+
+```{r, echo=FALSE}
+
+```
+
+xxx
+
+|                |Estimate   |Std. Error  |df        |t value |Pr(>&#124;t&#124;) |
+|:---:           |:---:      |:---:       |:---:     |:---:   |:---:              |
+|(Intercept)     |-12.93     |0.67        |16.75     |-19.43  |6.34e-13 ***       |
+|log_duration    |0.79       |0.04        |24.53     |17.57   |2.10e-15 ***       |
+|log_views       |0.33       |0.04        |12.21     |8.09    |2.99e-06 ***       |
+|log_numlang     |2.33       |0.13        |10.98     |18.56   |1.21e-09 ***       |
+
+## Result
+
+## Model Coefficients
+
+xxx
+
+$$log(comments)= -12.70 + 0.77\cdot log(duration) + 0.32\cdot log(views) + 2.15\cdot log(numlang)$$
+
+xxx
+
+|                        |(Intercept) |log_duration |log_views  |log_numlang |
+|:---:                   |:---:       |:---:        |:---:      |:---:       |
+|Entertainment           |-12.70      |0.77         |0.32       |2.15        |
+|News & Politics         |-14.37      |0.90         |0.38       |2.21        |
+|People & Blogs          |-12.28      |0.73         |0.37       |2.47        |
+|Science & Technology    |-13.37      |0.82         |0.21       |2.49        |
+
+### Model Validation
+
+```{r, echo=FALSE}
+
+```
+   
+xxx
+
+## Discussion
+
+xxx
+
+## Citation
+
+xxx    
+
+\newpage
+## Appendix
+### More EDA
+```{r, echo=FALSE}
 
 ```
 
 
 
 
-```{r,echo=FALSE}
 
-```
+\newpage
+
+
 
 
 
