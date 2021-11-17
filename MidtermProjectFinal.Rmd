@@ -16,13 +16,9 @@ ggplot2,
 knitr,
 arm,
 data.table,
-foreign,
-gridExtra,
-car,
 stringr,
 rstan,
 rstanarm,
-zoo
 )
 ```
 
