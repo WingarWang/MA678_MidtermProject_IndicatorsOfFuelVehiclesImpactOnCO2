@@ -27,10 +27,6 @@ pacman::p_load(ggplot2,
                tidyverse)
 ```
 
-```{r,echo=FALSE}
-CO2 <- read.csv("CO2EmissionsCanada.csv", header = T)
-```
-
 ## Abstract
 
 xxx 
@@ -45,28 +41,33 @@ xxx
 
 xxx
 
-| column names      | explanation |
-| :--:              | :----- |
-| title             | The title of talk|
-| num_lang          | The number of available languages translations |
-| comments          | The number of comments |
-| duration_ted      | How long is the  video in  seconds |
-| view_ted          | The number of views |
-| categories        | The video was under which category on YouTube|
-| english           | Indicate the native language is English or not|
+|column names                     |explanation|
+|:--:                             |:-----|
+|Make                             |Company of the vehicle|
+|Model                            |Car Model|
+|Vehicle.Class                    |Class of vehicle depending on their utility, capacity and weight|
+|Engine.Size.L                    |Size of engine used in Litre|
+|Cylinders                        |Number of cylinders|
+|Transmission                     |Transmission type with number of gears|
+|Fuel.Type                        |Type of Fuel used|
+|Fuel.Consumption.City..L.100 km. |Fuel consumption in city roads (L/100 km)|
+|Fuel.Consumption.Hwy..L.100.km.  |Fuel consumption in highways (L/100 km)|
+|Fuel.Consumption.Comb..L.100.km. |The combined fuel consumption (55% city, 45% highway) is shown in L/100 km|
+|Fuel.Consumption.Comb..mpg.      |The combined fuel consumption in both city and highway is shown in mile per gallon(mpg)|
+|CO2.Emissions.g.km.              |The tailpipe emissions of carbon dioxide (in grams per kilometre) for combined city and highway driving|
 
 xxx
 
 ### Exploratory Data Analysis
 
 ```{r, echo=FALSE}
-
+CO2 <- read.csv("CO2EmissionsCanada.csv", header = T)
 ```
 
 xxx  
 
 ```{r, echo=FALSE, fig.height=4, fig.width= 10,fig.cap="xxx"}
-ggplot
+#ggplot
 ```
 
 ### Model Fitting
