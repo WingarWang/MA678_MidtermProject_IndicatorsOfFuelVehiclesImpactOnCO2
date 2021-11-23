@@ -19,7 +19,8 @@ knitr::opts_chunk$set(echo=TRUE,
 pacman::p_load(ggplot2,
                knitr,
                arm,
-               data.table,
+#              data.table,
+               dplyr,
                stringr,
                rstan,
                rstanarm,
@@ -39,11 +40,24 @@ https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64/reso
 
 ## Method
 
-### Data Cleaning and Processing
+### Data Cleaning and Combining
 
 ```{r, echo=FALSE}
+# import data
 co2 <- read.csv("CO2EmissionsCanada.csv", header = T)
 battery <- read.csv("MY2012-2021BatteryElectricVehicles.csv", header = T)
+# data explore
+str(co2)
+distinct(co2,Make)
+distinct(battery,Make)
+# process battery
+battery1 <- 
+battery2 <- 
+# process co2
+
+
+# combine
+
 ```
 
 xxx
@@ -127,7 +141,6 @@ xxx
 
 \newpage
 ## Appendix
-### More EDA
 ```{r, echo=FALSE}
 
 ```
@@ -136,7 +149,8 @@ xxx
 
 
 
-\newpage
+
+
 
 
 
