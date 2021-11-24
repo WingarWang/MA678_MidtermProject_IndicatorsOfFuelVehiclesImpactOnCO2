@@ -63,13 +63,15 @@ battery <- transform(battery,EngineSize=as.numeric(EngineSize),
                              FC_Comb=as.numeric(FC_Comb),
                              CO2Emissions=as.integer(CO2Emissions))
 battery <- mutate(battery,Make=toupper(Make))
-battery <- mutate(battery,Make=toupper(Model))
-battery <- mutate(battery,Make=toupper(VehicleClass))
+battery <- mutate(battery,Model=toupper(Model))
+battery <- mutate(battery,VehicleClass=toupper(VehicleClass))
 # process co2
 co2 <- co2[,-c(11)]
 colnames(co2) <- c("Make","Model","VehicleClass","EngineSize","Cylinders","Transmission","FuelType","FC_City","FC_Hwy","FC_Comb","CO2Emissions")
 # combine
-co2_final <- rbind(co2,battery_unname)
+#co2_final <- co2_final %>% bind_rows(co2,battery)
+identical(names(co2), names(battery))
+co2_final <- rbind(co2,battery)
 ```
 
 xxx
