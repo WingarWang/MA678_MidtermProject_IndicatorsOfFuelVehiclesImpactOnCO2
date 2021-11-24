@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo=TRUE,
                       fig.align='center',
                       message = FALSE,
                       warning = FALSE)
+# library
 pacman::p_load(ggplot2,
                knitr,
                arm,
@@ -46,15 +47,19 @@ https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64/reso
 # import data
 co2 <- read.csv("CO2EmissionsCanada.csv", header = T)
 battery <- read.csv("MY2012-2021BatteryElectricVehicles.csv", header = T)
-# data explore
+# check data
 str(co2)
 distinct(co2,Make)
 distinct(battery,Make)
 # process battery
+battery <- battery[-c(1),c(2,3,4,6,7,11,12,13,15)]
+battery <- battery %>%
+  add_column(Engine.Size.L="NA")
+
 battery1 <- 
 battery2 <- 
 # process co2
-
+co2 <- co2[,-c(11)]
 
 # combine
 
