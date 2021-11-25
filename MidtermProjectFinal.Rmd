@@ -69,6 +69,7 @@ colnames(co2) <- c("Make","Model","VehicleClass","EngineSize","Cylinders","Trans
 # combine
 identical(names(co2), names(battery))
 co2_final <- rbind(co2,battery)
+co2_final <- co2_final[order(co2_final$Make),]
 ```
 
 xxx
@@ -77,15 +78,15 @@ xxx
 |:--:                             |:-----|
 |Make                             |Company of the vehicle|
 |Model                            |Car Model|
-|Vehicle.Class                    |Class of vehicle depending on their utility, capacity and weight|
-|Engine.Size.L                    |Size of engine used in Litre|
+|VehicleClass                     |Class of vehicle depending on their utility, capacity and weight|
+|EngineSize                       |Size of engine used in Litre|
 |Cylinders                        |Number of cylinders|
 |Transmission                     |Transmission type with number of gears|
-|Fuel.Type                        |Type of Fuel used|
-|Fuel.Consumption.City..L.100 km. |Fuel consumption in city roads (L/100 km)|
-|Fuel.Consumption.Hwy..L.100.km.  |Fuel consumption in highways (L/100 km)|
-|Fuel.Consumption.Comb..L.100.km. |The combined fuel consumption (55% city, 45% highway) is shown in L/100 km|
-|CO2.Emissions.g.km.              |The tailpipe emissions of carbon dioxide (in grams per kilometre) for combined city and highway driving|
+|FuelType                         |Type of Fuel used|
+|FC_City                          |Fuel consumption in city roads (L/100 km)|
+|FC_Hwy                           |Fuel consumption in highways (L/100 km)|
+|FC_Comb                          |The combined fuel consumption (55% city, 45% highway) is shown in L/100 km|
+|CO2Emissions                     |The tailpipe emissions of carbon dioxide (in grams per kilometre) for combined city and highway driving|
 
 xxx
 
