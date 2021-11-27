@@ -25,7 +25,8 @@ pacman::p_load(ggplot2,
                rstan,
                rstanarm,
                readr,
-               tidyverse)
+               tidyverse,
+               hrbrthemes)
 ```
 
 ## Abstract
@@ -56,7 +57,7 @@ battery <- battery[,c(1,2,3,10,11,4,5,6,7,8,9)]
 colnames(battery) <- c("Make","Model","VehicleClass","EngineSize","Cylinders","Transmission","FuelType","FC_City","FC_Hwy","FC_Comb","CO2Emissions")
 battery <- battery[order(battery$Make),]
 battery <- distinct(battery,Make,Model,VehicleClass,.keep_all=TRUE)
-battery <- transform(battery,EngineSize=as.numeric(EngineSize), 
+battery <- transform(battery,EngineSize=as.numeric(EngineSize),
                              Cylinders=as.integer(Cylinders),
                              FC_City=as.numeric(FC_City),
                              FC_Hwy=as.numeric(FC_Hwy),
@@ -101,32 +102,49 @@ Make_amount <- co2_final %>%
   group_by(Make) %>% summarise(Count = n())
 ```
 
-```{r, echo=FALSE, fig.height=7, fig.width= 15,fig.cap="xxx"}
+```{r, echo=FALSE, fig.height=7, fig.width= 14,fig.cap="xxx"}
 # variable "Make" barplot
 ggplot(data=Make_amount, aes(x=Make, y=Count)) +
   geom_bar(stat='identity', fill=rainbow(n=length(Make_amount$Make))) +
-  theme(axis.text.x=element_text(angle=90, vjust=0.7))
-  labs("Brand", "Amount of vehicle", title="The amount of vehicle in different brands")
+  theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) +
+  labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
+```
+
+xxx
+
+```{r, echo=FALSE, fig.height=7, fig.width= 14,fig.cap="xxx"}
+# distribution of CO2 emissions histogram
+ggplot(data=co2_final, aes(x=CO2Emissions)) +
+    geom_histogram(binwidth=5, fill="#000099", color="#e9ecef") +
+    theme(plot.title=element_text(size=15)) +
+    labs(x="CO2 emissions", y="Count", title="Distribution of CO2 emissions")
 ```
 
 xxx
 
 ```{r, echo=FALSE}
+# http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
 
+# prepare for corrplot
+Corrplot_data <- co2_final[,-c(1,2,3,6,7)]
+Corrplot_data <- transform(Corrplot_data,EngineSize=as.numeric(EngineSize),
+                                         Cylinders=as.numeric(Cylinders),
+                             FC_City=as.numeric(FC_City),
+                             FC_Hwy=as.numeric(FC_Hwy),
+                             FC_Comb=as.numeric(FC_Comb),
+                             CO2Emissions=as.numeric(CO2Emissions))
+Corrplot_final <- cor(Corrplot_data)
+
+install.packages("PerformanceAnalytics")
+library("PerformanceAnalytics")
+my_data <- mtcars[, c(1,3,4,5,6,7)]
+chart.Correlation(Corrplot_final, histogram=TRUE, pch=19)
 ```
 
 ```{r, echo=FALSE, fig.height=4, fig.width= 10,fig.cap="xxx"}
-#ggplot
-```
-
-xxx
-
-```{r, echo=FALSE}
-
-```
-
-```{r, echo=FALSE, fig.height=4, fig.width= 10,fig.cap="xxx"}
-#ggplot
+#library(corrplot)
+corrplot(Corrplot_final, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
 ```
 
 ### Model Fitting
