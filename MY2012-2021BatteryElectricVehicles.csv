@@ -56,7 +56,7 @@ Year,,,,(kW),,Type,City (kWh/100 km),Hwy (kWh/100 km),Comb (kWh/100 km),City (Le
 2016,Tesla,Model S P85D/P90D,Full-size,568,A1,B,23.4,21.5,22.5,2.6,2.4,2.5,407,0,10,n/a,12
 2016,Tesla,Model S P90D (Refresh),Full-size,568,A1,B,22.9,21,22.1,2.6,2.4,2.5,435,0,10,n/a,12
 2016,Tesla,Model S P100D,Full-size,568,A1,B,22.6,20,21.5,2.5,2.3,2.4,507,0,10,n/a,12
-2016,Tesla ,Model X 60D,SUV: Standard,386,A1,B,23,22.2,22.6,2.6,2.5,2.5,322,0,10,n/a,10
+2016,Tesla,Model X 60D,SUV: Standard,386,A1,B,23,22.2,22.6,2.6,2.5,2.5,322,0,10,n/a,10
 2016,Tesla,Model X 75D,SUV: Standard,386,A1,B,23,21.9,22.5,2.6,2.5,2.5,383,0,10,n/a,12
 2016,Tesla,Model X 90D,SUV: Standard,386,A1,B,23.2,22.2,22.7,2.6,2.5,2.6,414,0,10,n/a,12
 2016,Tesla,Model X P90D,SUV: Standard,568,A1,B,23.6,23.3,23.5,2.7,2.6,2.6,402,0,10,n/a,12
@@ -76,13 +76,13 @@ Year,,,,(kW),,Type,City (kWh/100 km),Hwy (kWh/100 km),Comb (kWh/100 km),City (Le
 2017,Tesla,Model S 90D,Full-size,386,A1,B,20.6,19.7,20.2,2.3,2.2,2.3,473,0,10,10,12
 2017,Tesla,Model S 100D,Full-size,386,A1,B,20.7,20.5,20.6,2.3,2.3,2.3,539,0,10,10,12
 2017,Tesla,Model S P90D,Full-size,568,A1,B,22.8,20.9,22,2.6,2.3,2.5,435,0,10,10,12
-2017,Tesla ,Model S P100D,Full-size,568,A1,B,22.6,20,21.5,2.5,2.3,2.4,507,0,10,10,12
-2017,Tesla ,Model X 60D,SUV: Standard,386,A1,B,23,22.2,22.6,2.6,2.5,2.5,322,0,10,10,10
-2017,Tesla ,Model X 75D,SUV: Standard,386,A1,B,23,21.9,22.5,2.6,2.5,2.5,383,0,10,10,12
-2017,Tesla ,Model X 90D,SUV: Standard,386,A1,B,23.2,22.2,22.7,2.6,2.5,2.6,414,0,10,10,12
-2017,Tesla ,Model X 100D,SUV: Standard,386,A1,B,24.3,23.7,24,2.7,2.7,2.7,475,0,10,10,12
-2017,Tesla ,Model X P90D,SUV: Standard,568,A1,B,23.6,23.3,23.5,2.7,2.6,2.6,402,0,10,10,12
-2017,Tesla ,Model X P100D,SUV: Standard,568,A1,B,25.7,22.9,24.4,2.9,2.6,2.7,465,0,10,10,12
+2017,Tesla,Model S P100D,Full-size,568,A1,B,22.6,20,21.5,2.5,2.3,2.4,507,0,10,10,12
+2017,Tesla,Model X 60D,SUV: Standard,386,A1,B,23,22.2,22.6,2.6,2.5,2.5,322,0,10,10,10
+2017,Tesla,Model X 75D,SUV: Standard,386,A1,B,23,21.9,22.5,2.6,2.5,2.5,383,0,10,10,12
+2017,Tesla,Model X 90D,SUV: Standard,386,A1,B,23.2,22.2,22.7,2.6,2.5,2.6,414,0,10,10,12
+2017,Tesla,Model X 100D,SUV: Standard,386,A1,B,24.3,23.7,24,2.7,2.7,2.7,475,0,10,10,12
+2017,Tesla,Model X P90D,SUV: Standard,568,A1,B,23.6,23.3,23.5,2.7,2.6,2.6,402,0,10,10,12
+2017,Tesla,Model X P100D,SUV: Standard,568,A1,B,25.7,22.9,24.4,2.9,2.6,2.7,465,0,10,10,12
 2017,Volkswagen,e-Golf,Compact,100,A1,B,16.8,18.6,17.4,1.9,2.1,2,201,0,10,10,5.3
 2018,BMW,i3,Subcompact,125,A1,B,16.2,19.7,17.8,1.8,2.2,2,183,0,10,10,5
 2018,BMW,i3s,Subcompact,135,A1,B,17.1,21.1,18.9,1.9,2.4,2.1,172,0,10,10,5

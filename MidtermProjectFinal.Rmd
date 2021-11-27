@@ -43,10 +43,10 @@ https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64/reso
 ### Data Cleaning and Combining
 
 ```{r, echo=FALSE}
-# import data
+# import two dataset
 co2 <- read.csv("CO2EmissionsCanada.csv", header = T)
 battery <- read.csv("MY2012-2021BatteryElectricVehicles.csv", header = T)
-# process battery
+# clean "battery" dataset
 battery <- battery[-c(1),c(2,3,4,6,7,11,12,13,15)]
 battery <- battery %>%
   add_column(Engine.Size.L="NA")
@@ -63,10 +63,11 @@ battery <- transform(battery,EngineSize=as.numeric(EngineSize),
                              FC_Comb=as.numeric(FC_Comb),
                              CO2Emissions=as.integer(CO2Emissions))
 battery <- mutate(battery,Make=toupper(Make),Model=toupper(Model),VehicleClass=toupper(VehicleClass))
-# process co2
+
+# clean "co2" dataset
 co2 <- co2[,-c(11)]
 colnames(co2) <- c("Make","Model","VehicleClass","EngineSize","Cylinders","Transmission","FuelType","FC_City","FC_Hwy","FC_Comb","CO2Emissions")
-# combine
+# combine two dataset
 identical(names(co2), names(battery))
 co2_final <- rbind(co2,battery)
 co2_final <- co2_final[order(co2_final$Make),]
@@ -92,11 +93,36 @@ xxx
 
 ### Exploratory Data Analysis
 
+xxx 
+
+```{r, echo=FALSE}
+# calculate "Make" amount
+Make_amount <- co2_final %>% 
+  group_by(Make) %>% summarise(Count = n())
+```
+
+```{r, echo=FALSE, fig.height=6, fig.width= 10,fig.cap="xxx"}
+# variable "Make" barplot
+ggplot(data=Make_amount,aes(x=Count, y=Make)) +
+  geom_bar(stat='identity',fill=rainbow(n=length(Make_amount$Make))) +
+  labs("Brand","Amount of vehicle",title = "The amount of vehicle in different brands")
+```
+
+xxx
+
 ```{r, echo=FALSE}
 
 ```
 
-xxx  
+```{r, echo=FALSE, fig.height=4, fig.width= 10,fig.cap="xxx"}
+#ggplot
+```
+
+xxx
+
+```{r, echo=FALSE}
+
+```
 
 ```{r, echo=FALSE, fig.height=4, fig.width= 10,fig.cap="xxx"}
 #ggplot
