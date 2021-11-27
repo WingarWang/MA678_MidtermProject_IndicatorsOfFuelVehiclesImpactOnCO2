@@ -101,11 +101,12 @@ Make_amount <- co2_final %>%
   group_by(Make) %>% summarise(Count = n())
 ```
 
-```{r, echo=FALSE, fig.height=6, fig.width= 10,fig.cap="xxx"}
+```{r, echo=FALSE, fig.height=7, fig.width= 15,fig.cap="xxx"}
 # variable "Make" barplot
-ggplot(data=Make_amount,aes(x=Count, y=Make)) +
-  geom_bar(stat='identity',fill=rainbow(n=length(Make_amount$Make))) +
-  labs("Brand","Amount of vehicle",title = "The amount of vehicle in different brands")
+ggplot(data=Make_amount, aes(x=Make, y=Count)) +
+  geom_bar(stat='identity', fill=rainbow(n=length(Make_amount$Make))) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.7))
+  labs("Brand", "Amount of vehicle", title="The amount of vehicle in different brands")
 ```
 
 xxx
