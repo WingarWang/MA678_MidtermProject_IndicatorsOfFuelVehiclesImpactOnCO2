@@ -26,7 +26,8 @@ pacman::p_load(ggplot2,
                rstanarm,
                readr,
                tidyverse,
-               hrbrthemes)
+               hrbrthemes,
+               corrplot)
 ```
 
 ## Abstract
@@ -136,9 +137,7 @@ round(Corrplot_final,2)
 ```
 
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
-#library(corrplot)
-corrplot(Corrplot_final, type = "upper", order = "hclust", 
-         tl.col = "black", tl.srt = 45)
+corrplot(Corrplot_final, type="upper", order="hclust", tl.col="black", tl.srt=45)
 ```
 
 ### Model Fitting
