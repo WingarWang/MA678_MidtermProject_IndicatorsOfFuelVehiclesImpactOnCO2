@@ -138,7 +138,7 @@ xxx
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # distribution of CO2 emissions histogram
 ggplot(data=co2_final, aes(x=CO2Emissions)) +
-    geom_histogram(aes(y = ..density..),binwidth=5, fill="#666666", color="#e9ecef") +
+    geom_histogram(aes(y=..density..),binwidth=5, fill="#666666", color="#e9ecef") +
     geom_density(lwd=1.5,linetype=1,colour="#FF0033") +
     theme(plot.title=element_text(size=15)) +
     labs(x="CO2 emissions", y="Count", title="Distribution of CO2 emissions")
