@@ -105,32 +105,18 @@ Make_amount <- co2_final %>%
 
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # variable "Make" barplot
-ggplot(data=Make_amount, aes(x=reorder(Make,-Count), y=Count)) +
-  geom_bar(stat='identity', fill=rainbow(n=length(Make_amount$Make))) +
+ggplot(data=Make_amount, aes(x=Make, y=Count)) +
+  geom_bar(stat='identity', fill=rainbow(n=length(Make_amount$Count))) +
   theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) +
   labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
 ```
 
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
-#### variable "Make" boxplot
-
-# Using median
-Make_amount %>%
-  mutate(Make=fct_reorder(Make,Count, .fun='median')) %>%
-  ggplot(data=Make_amount, aes(x=Make, y=Count, fill=Make)) + 
-    geom_boxplot(aes(x=Make, y=Count)) +
-    theme(legend.position="none") 
-
-# reorder is close to order, but is made to change the order of the factor levels.
-Make_amount$Count <- with(Make_amount, reorder(Make, Count, median))
-
-#p <- mpg %>%
-  ggplot(Make_amount, aes(x=Make, y=Count, fill=count)) + 
+# "co2" boxplot
+ggplot(data=co2_final, aes(x=Make, y=,CO2Emissions, fill=Make)) + 
     geom_boxplot() +
-    xlab("class") +
-    theme(legend.position="none") +
-    xlab("")
-p
+    theme(axis.text.x=element_text(angle=90, vjust=0.7), legend.position='none') +
+    labs(x="Brand", y="CO2 emission", title="The CO2 emission of vehicle in different brands")
 ```
 
 xxx
