@@ -162,6 +162,15 @@ round(Corrplot_final,2)
 corrplot(Corrplot_final, type="upper", order="hclust", tl.col="black", tl.srt=45)
 ```
 
+```{r}
+# pie plot
+
+
+
+```
+
+
+
 ### Model Fitting
 
 ```{r, echo=FALSE}
