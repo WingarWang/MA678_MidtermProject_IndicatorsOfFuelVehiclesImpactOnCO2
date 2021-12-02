@@ -148,13 +148,13 @@ xxx
 
 ```{r, echo=FALSE}
 # prepare for corrplot
-Corrplot_data <- co2_final[,-c(1,2,3,4,5,6,7)]
+Corrplot_data <- co2_final[,-c(1,2,3,6,7)]
 Corrplot_data <- transform(Corrplot_data,
                              FC_City=as.numeric(FC_City),
                              FC_Hwy=as.numeric(FC_Hwy),
                              FC_Comb=as.numeric(FC_Comb),
                              CO2Emissions=as.numeric(CO2Emissions))
-Corrplot_final <- cor(Corrplot_data)
+Corrplot_final <- cor(Corrplot_data, use =  "complete.obs")
 round(Corrplot_final,2)
 ```
 
