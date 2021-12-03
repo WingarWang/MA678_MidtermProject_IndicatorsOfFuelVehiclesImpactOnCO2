@@ -99,13 +99,13 @@ xxx
 
 ```{r, echo=FALSE}
 # calculate "Make" amount
-Make_amount <- co2_final %>% 
+Make_data <- co2_final %>% 
   group_by(Make) %>% summarise(Count = n())
 ```
 
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # variable "Make" barplot
-ggplot(data=Make_amount, aes(x=Make, y=Count)) +
+ggplot(data=Make_data, aes(x=Make, y=Count)) +
   geom_bar(stat='identity', fill=rainbow(n=length(Make_amount$Count))) +
   theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) +
   labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
@@ -149,7 +149,28 @@ corrplot(Corrplot_final, type="upper", order="hclust", tl.col="black", tl.srt=45
 ```
 
 ```{r}
-# pie plot
+# pie plot: VehicleClass, EngineSize, Cylinders, Transmission, FuelType 
+
+data <- data.frame(
+  group=LETTERS[1:5],
+  value=c(13,7,9,21,2)
+)
+
+data <- data %>% 
+  arrange(desc(group)) %>%
+  mutate(prop = value / sum(data$value) *100) %>%
+  mutate(ypos = cumsum(prop)- 0.5*prop )
+
+ggplot(data, aes(x="", y=prop, fill=group)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() + 
+  theme(legend.position="none") +
+  
+  geom_text(aes(y = ypos, label = group), color = "white", size=6) +
+  scale_fill_brewer(palette="Set1")
+
+#########
 
 
 
