@@ -224,8 +224,21 @@ ggplot(data=Percent_data_5)+
 ### Model Fitting
 
 ```{r, echo=FALSE}
-
+fit <- lmer(CO2Emissions~FC_City+FC_Hwy+FC_Comb+(1+FC_Comb|FuelType),co2_final)
+#+(1+log_duration|categories)+(1+log_views|categories)+(1+log_numlang|categories)
+summary(fit)
 ```
+|Make                       
+|Model                       
+|VehicleClass                
+|EngineSize                      
+|Cylinders                    
+|Transmission            
+|FuelType                       
+|FC_City                      
+|FC_Hwy                       
+|FC_Comb         
+|CO2Emissions 
 
 xxx
 
