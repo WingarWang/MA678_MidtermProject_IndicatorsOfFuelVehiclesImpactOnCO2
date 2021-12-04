@@ -106,7 +106,7 @@ Make_data <- co2_final %>%
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # variable "Make" barplot
 ggplot(data=Make_data, aes(x=Make, y=Count)) +
-  geom_bar(stat='identity', fill=rainbow(n=length(Make_amount$Count))) +
+  geom_bar(stat='identity', fill=rainbow(n=length(Make_data$Count))) +
   theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) +
   labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
 ```
@@ -140,40 +140,83 @@ Corrplot_data <- transform(Corrplot_data,
                              FC_Hwy=as.numeric(FC_Hwy),
                              FC_Comb=as.numeric(FC_Comb),
                              CO2Emissions=as.numeric(CO2Emissions))
-Corrplot_final <- cor(Corrplot_data, use =  "complete.obs")
-round(Corrplot_final,2)
+Corrplot_data_final <- cor(Corrplot_data, use =  "complete.obs")
+round(Corrplot_data_final,2)
 ```
 
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
-corrplot(Corrplot_final, type="upper", order="hclust", tl.col="black", tl.srt=45)
+corrplot(Corrplot_data_final, type="upper", order="hclust", tl.col="black", tl.srt=45)
 ```
 
 ```{r}
+# prepare for the pie plot
+Percent_data_1 <- co2_final %>% 
+  group_by(VehicleClass) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percent=`n`/sum(`n`)) 
+Percent_data_1$label <- scales::percent(Percent_data_1$percent)
+
+Percent_data_2 <- co2_final %>% 
+  group_by(EngineSize) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percent=`n`/sum(`n`)) 
+Percent_data_2$label <- scales::percent(Percent_data_2$percent)
+
+Percent_data_3 <- co2_final %>% 
+  group_by(Cylinders) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percent=`n`/sum(`n`)) 
+Percent_data_3$label <- scales::percent(Percent_data_3$percent)
+
+Percent_data_4 <- co2_final %>% 
+  group_by(Transmission) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percent=`n`/sum(`n`)) 
+Percent_data_4$label <- scales::percent(Percent_data_4$percent)
+
+Percent_data_5 <- co2_final %>% 
+  group_by(FuelType) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(percent=`n`/sum(`n`)) 
+Percent_data_5$label <- scales::percent(Percent_data_5$percent)
+```
+
+```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # pie plot: VehicleClass, EngineSize, Cylinders, Transmission, FuelType 
+ggplot(data=Percent_data_1)+
+  geom_bar(aes(x="", y=percent, fill=VehicleClass), stat="identity", width = 1)+
+  coord_polar("y", start=0, direction = -1)+
+  theme_void()+
+  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_1$label)
 
-data <- data.frame(
-  group=LETTERS[1:5],
-  value=c(13,7,9,21,2)
-)
+ggplot(data=Percent_data_2)+
+  geom_bar(aes(x="", y=percent, fill=EngineSize), stat="identity", width = 1)+
+  coord_polar("y", start=0, direction = -1)+
+  theme_void()+
+  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_2$label)
 
-data <- data %>% 
-  arrange(desc(group)) %>%
-  mutate(prop = value / sum(data$value) *100) %>%
-  mutate(ypos = cumsum(prop)- 0.5*prop )
+ggplot(data=Percent_data_3)+
+  geom_bar(aes(x="", y=percent, fill=Cylinders), stat="identity", width = 1)+
+  coord_polar("y", start=0, direction = -1)+
+  theme_void()+
+  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_3$label)
 
-ggplot(data, aes(x="", y=prop, fill=group)) +
-  geom_bar(stat="identity", width=1, color="white") +
-  coord_polar("y", start=0) +
-  theme_void() + 
-  theme(legend.position="none") +
-  
-  geom_text(aes(y = ypos, label = group), color = "white", size=6) +
-  scale_fill_brewer(palette="Set1")
+ggplot(data=Percent_data_4)+
+  geom_bar(aes(x="", y=percent, fill=Transmission), stat="identity", width = 1)+
+  coord_polar("y", start=0, direction = -1)+
+  theme_void()+
+  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_4$label)
 
-#########
-
-
-
+ggplot(data=Percent_data_5)+
+  geom_bar(aes(x="", y=percent, fill=FuelType), stat="identity", width = 1)+
+  coord_polar("y", start=0, direction = -1)+
+  theme_void()+
+  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_5$label)
 ```
 
 
