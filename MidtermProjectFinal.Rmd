@@ -1,7 +1,7 @@
 ---
 title: "MA678 Midterm Project"
 author: "Yujia Wang"
-date: "December 2, 2021"
+date: "December 10, 2021"
 output:
   pdf_document: 
           latex_engine: xelatex
@@ -27,7 +27,11 @@ pacman::p_load(ggplot2,
                readr,
                tidyverse,
                hrbrthemes,
-               corrplot)
+               corrplot,
+               lmer,
+               lmer4,
+               lattice,
+               gridExtra)
 ```
 
 ## Abstract
@@ -111,6 +115,8 @@ ggplot(data=Make_data, aes(x=Make, y=Count)) +
   labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
 ```
 
+xxx 
+
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # "co2" boxplot
 ggplot(data=co2_final, aes(x=Make, y=,CO2Emissions, fill=Make)) + 
@@ -147,6 +153,8 @@ round(Corrplot_data_final,2)
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 corrplot(Corrplot_data_final, type="upper", order="hclust", tl.col="black", tl.srt=45)
 ```
+
+xxx
 
 ```{r}
 # prepare for the pie plot
@@ -219,13 +227,12 @@ ggplot(data=Percent_data_5)+
   geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_5$label)
 ```
 
-
-
 ### Model Fitting
 
 ```{r, echo=FALSE}
 fit <- lmer(CO2Emissions~FC_City+FC_Hwy+FC_Comb+(1+FC_Comb|FuelType),co2_final)
 #+(1+log_duration|categories)+(1+log_views|categories)+(1+log_numlang|categories)
+coef(fit)
 summary(fit)
 ```
 |Make                       
@@ -268,8 +275,18 @@ xxx
 
 ### Model Validation
 
-```{r, echo=FALSE}
+```{r echo=FALSE, fig.height=2.5, fig.width=6, fig.cap="Residual plot and Q-Q plot."}
+#binnedplot(fitted(fit4),resid(fit4))
+re <- plot(fit)
+qq <- qqmath(fit)
+grid.arrange(re,qq,nrow=1)
+```
 
+```{r echo=FALSE, fig.height=2, fig.width=4, fig.cap="Residuals vs Leverage."}
+ggplot(data.frame(lev=hatvalues(fit4),pearson=residuals(fit4,type="pearson")),
+      aes(x=lev,y=pearson)) +
+    geom_point() +
+    theme_bw()
 ```
    
 xxx
@@ -287,12 +304,6 @@ xxx
 ```{r, echo=FALSE}
 
 ```
-
-
-
-
-
-
 
 
 
