@@ -156,7 +156,7 @@ corrplot(Corrplot_data_final, type="upper", order="hclust", tl.col="black", tl.s
 
 xxx
 
-```{r}
+```{r, echo=FALSE}
 # prepare for the pie plot
 Percent_data_1 <- co2_final %>% 
   group_by(VehicleClass) %>% 
@@ -228,6 +228,21 @@ ggplot(data=Percent_data_5)+
 ```
 
 ### Model Fitting
+
+```{r, echo=FALSE}
+co2_final <- transform(co2_final,Make=as.factor(Make),
+                                 Model=as.factor(Model),
+                                 VehicleClass=as.factor(VehicleClass),
+                                 EngineSize=as.factor(EngineSize),
+                                 Cylinders=as.factor(Cylinders),
+                                 Transmission=as.factor(Transmission),
+                                 FuelType=as.factor(FuelType))
+# just a test
+model_test <- lmer(CO2Emissions~EngineSize+FuelType+FC_Comb+(1|Make ),data=co2_final)
+summary(model_test)
+# can't add more: fixed-effect model matrix is rank deficient so dropping 1 column / coefficient
+```
+
 
 ```{r, echo=FALSE}
 # zero
