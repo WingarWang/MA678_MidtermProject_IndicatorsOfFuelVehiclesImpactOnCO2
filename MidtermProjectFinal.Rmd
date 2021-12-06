@@ -230,6 +230,11 @@ ggplot(data=Percent_data_5)+
 ### Model Fitting
 
 ```{r, echo=FALSE}
+
+
+
+
+
 fit <- lmer(CO2Emissions~FC_City+FC_Hwy+FC_Comb+(1+FC_Comb|FuelType),co2_final)
 #+(1+log_duration|categories)+(1+log_views|categories)+(1+log_numlang|categories)
 coef(fit)
@@ -302,7 +307,10 @@ xxx
 \newpage
 ## Appendix
 ```{r, echo=FALSE}
-
+# scatter plot matrices
+#install.packages("psych")
+library("psych")
+pairs.panels(co2_final)
 ```
 
 
