@@ -230,15 +230,41 @@ ggplot(data=Percent_data_5)+
 ### Model Fitting
 
 ```{r, echo=FALSE}
+# zero
+model0 <- lmer(CO2Emissions~(1|FuelType ),data=co2_final)
+summary(model0)
+
+#
+model1 <- lmer(CO2Emissions~Cylinders+(1|FuelType ),data=co2_final)
+summary(model1)
+
+#
+AIC(model0)
+BIC(model0)
+deviance(model0,REML=FALSE)
+AIC(model1)
+BIC(model1)
+deviance(model1,REML=FALSE)
 
 
+library("lmerTest")
+#install.packages("bruceR")
+library("bruceR")
+HLM_summary(fit)
+
+#install.packages("MuMIn")
+library("MuMIn")
 
 
-
-fit <- lmer(CO2Emissions~FC_City+FC_Hwy+FC_Comb+(1+FC_Comb|FuelType),co2_final)
+fit <- lmer(CO2Emissions~FC_City+FC_Hwy+FC_Comb+(1+FC_Comb|FuelType),data=co2_final)
 #+(1+log_duration|categories)+(1+log_views|categories)+(1+log_numlang|categories)
 coef(fit)
 summary(fit)
+
+anova( , , )
+install.packages("texreg")
+library("texreg")
+texreg::screenreg(list( , , ))
 ```
 |Make                       
 |Model                       
@@ -254,12 +280,14 @@ summary(fit)
 
 xxx
 
-|                |Estimate   |Std. Error  |df        |t value |Pr(>&#124;t&#124;) |
-|:---:           |:---:      |:---:       |:---:     |:---:   |:---:              |
-|(Intercept)     |-12.93     |0.67        |16.75     |-19.43  |6.34e-13 ***       |
-|log_duration    |0.79       |0.04        |24.53     |17.57   |2.10e-15 ***       |
-|log_views       |0.33       |0.04        |12.21     |8.09    |2.99e-06 ***       |
-|log_numlang     |2.33       |0.13        |10.98     |18.56   |1.21e-09 ***       |
+```{r}
+# complete pooling
+ggplot(co2_final)+geom_point()+aes(x=Cylinders,y=CO2Emissions)+geom_smooth(method="lm",se=FALSE)
+
+# no pooling
+ggplot(co2_final)+geom_point()+aes(x=FuelType,y=CO2Emissions,color=factor(Make))+geom_smooth(method="lm",se=FALSE)+facet_wrap(~Make)
+
+```
 
 ## Result
 
@@ -270,13 +298,6 @@ xxx
 $$log(comments)= -12.70 + 0.77\cdot log(duration) + 0.32\cdot log(views) + 2.15\cdot log(numlang)$$
 
 xxx
-
-|                        |(Intercept) |log_duration |log_views  |log_numlang |
-|:---:                   |:---:       |:---:        |:---:      |:---:       |
-|Entertainment           |-12.70      |0.77         |0.32       |2.15        |
-|News & Politics         |-14.37      |0.90         |0.38       |2.21        |
-|People & Blogs          |-12.28      |0.73         |0.37       |2.47        |
-|Science & Technology    |-13.37      |0.82         |0.21       |2.49        |
 
 ### Model Validation
 
