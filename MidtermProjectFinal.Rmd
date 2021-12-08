@@ -31,7 +31,8 @@ pacman::p_load(ggplot2,
                lmer,
                lmer4,
                lattice,
-               gridExtra)
+               gridExtra,
+               GGally)
 ```
 
 ## Abstract
@@ -140,8 +141,11 @@ xxx
 
 ```{r, echo=FALSE}
 # prepare for corrplot
-Corrplot_data <- co2_final[,-c(1,2,3,6,7)]
+Corrplot_data <- co2_final[,-c(1,2,3,6)]
 Corrplot_data <- transform(Corrplot_data,
+                             EngineSize=as.numeric(EngineSize),
+                             Cylinders=as.numeric(Cylinders),
+                             FuelType=as.numeric(FuelType),
                              FC_City=as.numeric(FC_City),
                              FC_Hwy=as.numeric(FC_Hwy),
                              FC_Comb=as.numeric(FC_Comb),
@@ -152,6 +156,11 @@ round(Corrplot_data_final,2)
 
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 corrplot(Corrplot_data_final, type="upper", order="hclust", tl.col="black", tl.srt=45)
+```
+
+```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
+# ggpairs
+ggpairs(Corrplot_data)+theme_bw()
 ```
 
 xxx
@@ -238,9 +247,21 @@ co2_final <- transform(co2_final,Make=as.factor(Make),
                                  Transmission=as.factor(Transmission),
                                  FuelType=as.factor(FuelType))
 # just a test
-model_test <- lmer(CO2Emissions~EngineSize+FuelType+FC_Comb+(1|Make ),data=co2_final)
+model_test <- lmer(CO2Emissions~Transmission+EngineSize+FuelType+FC_Comb+(1|Make ),data=co2_final)
 summary(model_test)
-# can't add more: fixed-effect model matrix is rank deficient so dropping 1 column / coefficient
+
+library(devtools)
+devtools::install_github("strengejacke/sjPlot")
+library(lme4)
+install.packages("sjPlot")
+install.packages("sjmisc")
+library(sjPlot)
+library(sjmisc)
+devtools::install_github("strengejacke/strengejacke")
+
+#http://www.strengejacke.de/sjPlot/news/index.html
+plot_model(model_test, y.offset = .4)
+sjp.lmer(model_test, type = "rs.ri", vars = "c12hour", sample.n = 15)
 ```
 
 
