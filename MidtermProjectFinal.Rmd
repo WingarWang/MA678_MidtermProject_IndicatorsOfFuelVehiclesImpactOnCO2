@@ -139,25 +139,6 @@ ggplot(data=co2_final, aes(x=CO2Emissions)) +
 
 xxx
 
-```{r, echo=FALSE}
-# prepare for corrplot
-Corrplot_data <- co2_final[,-c(1,2,3,6)]
-Corrplot_data <- transform(Corrplot_data,
-                             EngineSize=as.numeric(EngineSize),
-                             Cylinders=as.numeric(Cylinders),
-                             FuelType=as.numeric(FuelType),
-                             FC_City=as.numeric(FC_City),
-                             FC_Hwy=as.numeric(FC_Hwy),
-                             FC_Comb=as.numeric(FC_Comb),
-                             CO2Emissions=as.numeric(CO2Emissions))
-Corrplot_data_final <- cor(Corrplot_data, use =  "complete.obs")
-round(Corrplot_data_final,2)
-```
-
-```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
-corrplot(Corrplot_data_final, type="upper", order="hclust", tl.col="black", tl.srt=45)
-```
-
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # ggpairs
 ggpairs(Corrplot_data)+theme_bw()
@@ -238,6 +219,37 @@ ggplot(data=Percent_data_5)+
 
 ### Model Fitting
 
+```{r}
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Cylinders=factor(Cylinders)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmission)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,VehicleClass=factor(VehicleClass)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=VehicleClass),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=VehicleClass),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
+```
+
+
 ```{r, echo=FALSE}
 co2_final <- transform(co2_final,Make=as.factor(Make),
                                  Model=as.factor(Model),
@@ -247,9 +259,18 @@ co2_final <- transform(co2_final,Make=as.factor(Make),
                                  Transmission=as.factor(Transmission),
                                  FuelType=as.factor(FuelType))
 # just a test
-model_test <- lmer(CO2Emissions~Transmission+EngineSize+FuelType+FC_Comb+(1|Make ),data=co2_final)
+model_test <- lmer(CO2Emissions~Transmission+EngineSize+FuelType+FC_Comb+(1|Make),data=co2_final)
 summary(model_test)
 
+model1 <- lmer(CO2Emissions~FC_Comb+(1+FC_Comb|FuelType),data=co2_final)
+summary(model1)
+
+
+
+
+```
+
+```{r}
 library(devtools)
 devtools::install_github("strengejacke/sjPlot")
 library(lme4)
