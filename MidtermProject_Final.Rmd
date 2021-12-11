@@ -139,6 +139,10 @@ ggplot(data=co2_final, aes(x=CO2Emissions)) +
 
 xxx
 
+```{r}
+Corrplot_data <- co2_final[,-c(1,2,3,6)]
+```
+
 ```{r, echo=FALSE, fig.height=7, fig.width=14, fig.cap="xxx"}
 # ggpairs
 ggpairs(Corrplot_data)+theme_bw()
@@ -262,7 +266,8 @@ co2_final <- transform(co2_final,Make=as.factor(Make),
 model_test <- lmer(CO2Emissions~Transmission+EngineSize+FuelType+FC_Comb+(1|Make),data=co2_final)
 summary(model_test)
 
-model1 <- lmer(CO2Emissions~FC_Comb+(1+FC_Comb|FuelType),data=co2_final)
+# formal test
+model1 <- lmer(CO2Emissions~FC_Comb+(1+FC_Comb|FuelType)++(1+FC_Comb|),data=co2_final)
 summary(model1)
 
 
