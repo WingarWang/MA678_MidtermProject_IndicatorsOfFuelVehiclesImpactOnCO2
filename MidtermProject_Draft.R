@@ -34,11 +34,11 @@ colnames(battery) <- c("Make","Model","VehicleClass","EngineSize","Cylinders","T
 battery <- battery[order(battery$Make),]
 battery <- distinct(battery,Make,Model,VehicleClass,.keep_all=TRUE)
 battery <- transform(battery,EngineSize=as.numeric(EngineSize),
-                     Cylinders=as.integer(Cylinders),
-                     FC_City=as.numeric(FC_City),
-                     FC_Hwy=as.numeric(FC_Hwy),
-                     FC_Comb=as.numeric(FC_Comb),
-                     CO2Emissions=as.integer(CO2Emissions))
+                             Cylinders=as.integer(Cylinders),
+                             FC_City=as.numeric(FC_City),
+                             FC_Hwy=as.numeric(FC_Hwy),
+                             FC_Comb=as.numeric(FC_Comb),
+                             CO2Emissions=as.integer(CO2Emissions))
 battery <- mutate(battery,Make=toupper(Make),Model=toupper(Model),VehicleClass=toupper(VehicleClass))
 
 # clean "co2" dataset
@@ -47,115 +47,87 @@ colnames(co2) <- c("Make","Model","VehicleClass","EngineSize","Cylinders","Trans
 
 # combine two dataset
 identical(names(co2), names(battery))
-co2_final <- rbind(co2,battery)
-co2_final <- co2_final[order(co2_final$Make),]
+co2_combine <- rbind(co2,battery)
+co2_combine <- co2_final[order(co2_final$Make),]
 
 ############################################## 3. Exploratory Data Analysis
 
-# calculate "Make" amount
-Make_data <- co2_final %>% 
-  group_by(Make) %>% summarise(Count = n())
+# variable "Make" barplot
+make_data <- co2_combine %>% 
+             group_by(Make) %>% 
+             summarise(Count = n())
 
-#################### variable "Make" barplot
 make_barplot <-
-ggplot(data=Make_data, aes(x=Make, y=Count)) +
+  ggplot(data=make_data, aes(x=Make, y=Count)) +
   geom_bar(stat='identity', fill=rainbow(n=length(Make_data$Count))) +
   theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) +
   labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
 
-#################### "co2" boxplot
+# "co2" boxplot
 co2_boxplot <-
-ggplot(data=co2_final, aes(x=Make, y=,CO2Emissions, fill=Make)) + 
+  ggplot(data=co2_combine, aes(x=Make, y=,CO2Emissions, fill=Make)) + 
   geom_boxplot() +
   theme(axis.text.x=element_text(angle=90, vjust=0.7), legend.position='none') +
   labs(x="Brand", y="CO2 emission", title="The CO2 emission of vehicle in different brands")
 
-#################### distribution of CO2 emissions histogram
-co2_histogram <-
-ggplot(data=co2_final, aes(x=CO2Emissions)) +
-  geom_histogram(aes(y=..density..),binwidth=5, fill="#666666", color="#e9ecef") +
-  geom_density(lwd=1.5,linetype=1,colour="#FF0033") +
-  theme(plot.title=element_text(size=15)) +
-  labs(x="CO2 emissions", y="Count", title="Distribution of CO2 emissions")
+# ggpairs
+corrplot_data <- co2[,-c(1,2,3,6)]
 
-# prepare for ggpairs
-Corrplot_data <- co2_final[,-c(1,2,3,6)]
-
-#################### ggpairs
-ggpairs <-
-ggpairs(Corrplot_data) +
+ggpairs <- 
+  ggpairs(corrplot_data) +
   theme_bw()
 
-# prepare for the pie plot
-Percent_data_1 <- co2_final %>% 
-  group_by(VehicleClass) %>% 
-  count() %>% 
-  ungroup() %>% 
-  mutate(percent=`n`/sum(`n`)) 
-Percent_data_1$label <- scales::percent(Percent_data_1$percent)
+# transform variables to the factor type
+co2_final <- transform(co2,Make=as.factor(Make),
+                       Model=as.factor(Model),
+                       VehicleClass=as.factor(VehicleClass),
+                       EngineSize=as.factor(EngineSize),
+                       Cylinders=as.factor(Cylinders),
+                       Transmission=as.factor(Transmission),
+                       FuelType=as.factor(FuelType))
 
-Percent_data_2 <- co2_final %>% 
-  group_by(EngineSize) %>% 
-  count() %>% 
-  ungroup() %>% 
-  mutate(percent=`n`/sum(`n`)) 
-Percent_data_2$label <- scales::percent(Percent_data_2$percent)
+# stack plot
+stackplot <- co2_combine %>%
+             count(EngineSize,Cylinders)
 
-Percent_data_3 <- co2_final %>% 
-  group_by(Cylinders) %>% 
-  count() %>% 
-  ungroup() %>% 
-  mutate(percent=`n`/sum(`n`)) 
-Percent_data_3$label <- scales::percent(Percent_data_3$percent)
+stackplot <-
+  ggplot(data=stackplot) +
+  geom_col(aes(x=Cylinders, y=n, fill=EngineSize)) 
 
-Percent_data_4 <- co2_final %>% 
-  group_by(Transmission) %>% 
-  count() %>% 
-  ungroup() %>% 
-  mutate(percent=`n`/sum(`n`)) 
-Percent_data_4$label <- scales::percent(Percent_data_4$percent)
+############################################## 4. Model Fitting
 
-Percent_data_5 <- co2_final %>% 
-  group_by(FuelType) %>% 
-  count() %>% 
-  ungroup() %>% 
-  mutate(percent=`n`/sum(`n`)) 
-Percent_data_5$label <- scales::percent(Percent_data_5$percent)
 
-#################### pie plot: VehicleClass, EngineSize, Cylinders, Transmission, FuelType 
-pieplot1 <-
-ggplot(data=Percent_data_1)+
-  geom_bar(aes(x="", y=percent, fill=VehicleClass), stat="identity", width = 1)+
-  coord_polar("y", start=0, direction = -1)+
-  theme_void()+
-  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_1$label)
 
-pieplot2 <-
-ggplot(data=Percent_data_2)+
-  geom_bar(aes(x="", y=percent, fill=EngineSize), stat="identity", width = 1)+
-  coord_polar("y", start=0, direction = -1)+
-  theme_void()+
-  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_2$label)
 
-pieplot3 <-
-ggplot(data=Percent_data_3)+
-  geom_bar(aes(x="", y=percent, fill=Cylinders), stat="identity", width = 1)+
-  coord_polar("y", start=0, direction = -1)+
-  theme_void()+
-  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_3$label)
 
-pieplot4 <-
-ggplot(data=Percent_data_4)+
-  geom_bar(aes(x="", y=percent, fill=Transmission), stat="identity", width = 1)+
-  coord_polar("y", start=0, direction = -1)+
-  theme_void()+
-  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_4$label)
 
-pieplot5 <-
-ggplot(data=Percent_data_5)+
-  geom_bar(aes(x="", y=percent, fill=FuelType), stat="identity", width = 1)+
-  coord_polar("y", start=0, direction = -1)+
-  theme_void()+
-  geom_text(aes(x=1, y = cumsum(percent)-percent/2), label=Percent_data_5$label)
 
+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Cylinders=factor(Cylinders)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmission)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,VehicleClass=factor(VehicleClass)))+
+  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=VehicleClass),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=VehicleClass),se=F,method="lm")+
+  xlab("Fuel consumption combination")+
+  ylab("CO2 emissions")+
+  theme(legend.position="right")
 
