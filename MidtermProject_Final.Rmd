@@ -78,12 +78,8 @@ ggpairs
 xxx
 
 ```{r, fig.height=7, fig.width=14, fig.cap="xxx"}
-# pie plot: VehicleClass, EngineSize, Cylinders, Transmission, FuelType 
-pieplot1
-pieplot2
-pieplot3
-pieplot4
-pieplot5
+# stack plot: VehicleClass, EngineSize, Cylinders, Transmission, FuelType 
+
 ```
 
 ### Model Fitting
@@ -106,19 +102,25 @@ pieplot5
 |CO2Emissions 
 
 ```{r, echo=FALSE}
-
-# just a test
-model_test <- lmer(CO2Emissions~Transmission+EngineSize+FuelType+FC_Comb+(1|Make),data=co2_final)
-summary(model_test)
-
-# formal test
-model1 <- lmer(CO2Emissions~FC_Comb+(1+FC_Comb|FuelType)++(1+FC_Comb|),data=co2_final)
-summary(model1)
-
+# fit model
+model <- lmer(CO2Emissions ~ FC_Comb+Cylinders+(1+FC_Comb|FuelType)+(1+FC_Comb|Transmission), data=co2_final)
+summary(model)
+summary(model, 
+        pars = c("(Intercept)", "FC_Comb", "Cylinders"),
+        probs = c(0.025, 0.975),
+        digits = 2)
+coef(model)
+ranef(model)
+fixef(model)
 
 
 
 ```
+
+
+
+
+
 
 ```{r}
 library(devtools)
@@ -131,19 +133,43 @@ library(sjmisc)
 devtools::install_github("strengejacke/strengejacke")
 
 #http://www.strengejacke.de/sjPlot/news/index.html
-plot_model(model_test, y.offset = .4)
-sjp.lmer(model_test, type = "rs.ri", vars = "c12hour", sample.n = 15)
+plot_model(model, y.offset = .4)
+rdfp1 <- plot_model(model,show.values = TRUE, value.offset = .3,vline.color = "black") + theme_bw() +
+  theme(panel.border = element_blank(),
+        axis.line = element_line(colour = "black"),
+        plot.title = element_text(hjust = 0.5))
+
+sjp.lmer(model, type = "rs.ri", vars = "c12hour", sample.n = 15)
+
+
+#################
+library(lme4)
+visual_ef <- REsim(model)
+pp <- plotREsim(visual_ef)
+pp
+
+dotplot(ranef(model,condVar=TRUE))
+
+
+#grid.arrange(,nrow=2)
+
+
+
+##################
+lmer_model_1 <- lmer(log(popularity) ~ rating + score + rank + rating:score + (1 | rating) + (1 | source:type), data = movie)
+
+rdfp1 <- plot_model(model,show.values = TRUE, value.offset = .3,vline.color = "black") + theme_bw() +
+  theme(panel.border = element_blank(),
+        axis.line = element_line(colour = "black"),
+        plot.title = element_text(hjust = 0.5))
+
+#################
+sjp.glm(model)
 ```
 
 
 ```{r, echo=FALSE}
-# zero
-model0 <- lmer(CO2Emissions~(1|FuelType ),data=co2_final)
-summary(model0)
 
-#
-model1 <- lmer(CO2Emissions~Cylinders+(1|FuelType ),data=co2_final)
-summary(model1)
 
 #
 AIC(model0)
@@ -177,14 +203,7 @@ texreg::screenreg(list( , , ))
 
 xxx
 
-```{r}
-# complete pooling
-ggplot(co2_final)+geom_point()+aes(x=Cylinders,y=CO2Emissions)+geom_smooth(method="lm",se=FALSE)
 
-# no pooling
-ggplot(co2_final)+geom_point()+aes(x=FuelType,y=CO2Emissions,color=factor(Make))+geom_smooth(method="lm",se=FALSE)+facet_wrap(~Make)
-
-```
 
 ## Result
 
@@ -198,19 +217,7 @@ xxx
 
 ### Model Validation
 
-```{r echo=FALSE, fig.height=2.5, fig.width=6, fig.cap="Residual plot and Q-Q plot."}
-#binnedplot(fitted(fit4),resid(fit4))
-re <- plot(fit)
-qq <- qqmath(fit)
-grid.arrange(re,qq,nrow=1)
-```
 
-```{r echo=FALSE, fig.height=2, fig.width=4, fig.cap="Residuals vs Leverage."}
-ggplot(data.frame(lev=hatvalues(fit4),pearson=residuals(fit4,type="pearson")),
-      aes(x=lev,y=pearson)) +
-    geom_point() +
-    theme_bw()
-```
    
 xxx
 
@@ -225,10 +232,7 @@ xxx
 \newpage
 ## Appendix
 ```{r, echo=FALSE}
-# scatter plot matrices
-#install.packages("psych")
-library("psych")
-pairs.panels(co2_final)
+
 ```
 
 

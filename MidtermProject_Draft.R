@@ -48,7 +48,7 @@ colnames(co2) <- c("Make","Model","VehicleClass","EngineSize","Cylinders","Trans
 # combine two dataset
 identical(names(co2), names(battery))
 co2_combine <- rbind(co2,battery)
-co2_combine <- co2_final[order(co2_final$Make),]
+co2_combine <- co2_combine[order(co2_combine$Make),]
 
 ############################################## 3. Exploratory Data Analysis
 
@@ -87,7 +87,7 @@ co2_final <- transform(co2,Make=as.factor(Make),
                        FuelType=as.factor(FuelType))
 
 # stack plot
-stackplot <- co2_combine %>%
+stackplot <- co2_final %>%
              count(EngineSize,Cylinders)
 
 stackplot <-
@@ -95,14 +95,7 @@ stackplot <-
   geom_col(aes(x=Cylinders, y=n, fill=EngineSize)) 
 
 ############################################## 4. Model Fitting
-
-
-
-
-
-
-
-
+explore_fueltype <-
 ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
   geom_point(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),alpha=0.2)+
   geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),se=F,method="lm")+
@@ -110,6 +103,7 @@ ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
   ylab("CO2 emissions")+
   theme(legend.position="right")
 
+explore_cylinders <-
 ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Cylinders=factor(Cylinders)))+
   geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),alpha=0.2)+
   geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),se=F,method="lm")+
@@ -117,6 +111,7 @@ ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Cylinders=factor(Cylinders)))
   ylab("CO2 emissions")+
   theme(legend.position="right")
 
+explore_transmission <-
 ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmission)))+
   geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),alpha=0.2)+
   geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),se=F,method="lm")+
@@ -124,10 +119,15 @@ ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmiss
   ylab("CO2 emissions")+
   theme(legend.position="right")
 
+explore_vehicleclass <-
 ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,VehicleClass=factor(VehicleClass)))+
   geom_point(aes(y=CO2Emissions,x=FC_Comb,color=VehicleClass),alpha=0.2)+
   geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=VehicleClass),se=F,method="lm")+
   xlab("Fuel consumption combination")+
   ylab("CO2 emissions")+
   theme(legend.position="right")
+
+
+
+
 
