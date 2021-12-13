@@ -177,27 +177,10 @@ ggplot(data=co2_final2,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmis
   theme(legend.position="right")
 
 ############################################## 6. Model fitting
-co2_final2 <- co2_final
 
-# use | not ||
-co2_final2$Transmission[co2_final2$Transmission=="A10"|co2_final2$Transmission =="A4"
-|co2_final2$Transmission=="A5"|co2_final2$Transmission=="A6"|co2_final2$Transmission=="A7"
-|co2_final2$Transmission=="A8"|co2_final2$Transmission=="A9"] <- "A"
 
-co2_final2$Transmission[co2_final2$Transmission == "AM5"|co2_final2$Transmission == "AM6"
-|co2_final2$Transmission == "AM7"|co2_final2$Transmission == "AM8"|co2_final2$Transmission == "AM9"] <- "AM"
 
-co2_final2$Transmission[co2_final2$Transmission == "AS10"|co2_final2$Transmission == "AS4"
-|co2_final2$Transmission == "AS5"|co2_final2$Transmission == "AS6"|co2_final2$Transmission == "AS7"
-|co2_final2$Transmission == "AS8"|co2_final2$Transmission == "AS9"] <- "AS"
 
-co2_final2$Transmission[co2_final2$Transmission == "AV"|co2_final2$Transmission == "AV10"
-|co2_final2$Transmission == "AV6"|co2_final2$Transmission == "AV7"|co2_final2$Transmission == "AV8"] <- "AV"
-
-co2_final2$Transmission[co2_final2$Transmission=="M5"|co2_final2$Transmission=="M6"
-|co2_final2$Transmission=="M7"] <- "M"
-
-co2_final2 <- transform(co2_final2,Transmission=as.factor(Transmission))
 ############################################## 7. Model checking
 
 

@@ -168,10 +168,10 @@ sjp.glm(model)
 
 
 ```{r, echo=FALSE}
-library("lmerTest")
-#install.packages("bruceR")
+
 library("bruceR")
-HLM_summary(fit)
+HLM_summary(model1)
+HLM_summary(model2)
 
 #install.packages("MuMIn")
 library("MuMIn")
@@ -202,6 +202,9 @@ xxx
 
 ### Model Validation
 
+```{r}
+
+```
 
    
 xxx
@@ -209,6 +212,10 @@ xxx
 ## Discussion
 
 xxx
+
+
+
+
 
 ## Reference
 
