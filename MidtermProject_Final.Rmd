@@ -101,17 +101,28 @@ xxx
 |FC_Comb         
 |CO2Emissions 
 
-```{r, echo=FALSE}
-# fit model
-model <- lmer(CO2Emissions ~ FC_Comb+Cylinders+(1+FC_Comb|FuelType)+(1+FC_Comb|Transmission), data=co2_final)
-summary(model)
-summary(model, 
+```{r}
+model2 <- lmer(CO2Emissions ~ VehicleClass_Value+EngineSize+FC_Comb+(1|Transmission)+(1+FC_Comb|FuelType), data=co2_final)
+
+summary(model2)
+summary(model2, 
         pars = c("(Intercept)", "FC_Comb", "Cylinders"),
         probs = c(0.025, 0.975),
         digits = 2)
-coef(model)
+
+fixef(model2)
+coef(model2)
 ranef(model)
-fixef(model)
+
+anova(model2)
+
+random_fueltype2 <- as.data.frame(ranef(model2)$FuelType)
+random_transmission2 <- as.data.frame(ranef(model2)$Transmission)
+
+```
+
+```{r}
+
 
 
 
@@ -143,8 +154,8 @@ sjp.lmer(model, type = "rs.ri", vars = "c12hour", sample.n = 15)
 
 
 #################
-library(lme4)
-visual_ef <- REsim(model)
+
+visual_ef <- REsim(model2)
 pp <- plotREsim(visual_ef)
 pp
 
@@ -189,10 +200,7 @@ HLM_summary(fit)
 library("MuMIn")
 
 
-fit <- lmer(CO2Emissions~FC_City+FC_Hwy+FC_Comb+(1+FC_Comb|FuelType),data=co2_final)
-#+(1+log_duration|categories)+(1+log_views|categories)+(1+log_numlang|categories)
-coef(fit)
-summary(fit)
+
 
 anova( , , )
 install.packages("texreg")
@@ -231,9 +239,7 @@ xxx
 
 \newpage
 ## Appendix
-```{r, echo=FALSE}
 
-```
 
 
 
