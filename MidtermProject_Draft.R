@@ -97,11 +97,11 @@ co2_boxplot <-
   labs(x="Brand", y="CO2 emission", title="The CO2 emission of vehicle in different brands")
 
 # ggpairs
-corrplot_data <- co2_final[,-c(1,2,3,6)]
-
-ggpairs <- 
-  ggpairs(corrplot_data) +
-  theme_bw()
+# corrplot_data <- co2_final[,-c(1,2,3,6)]
+# 
+# ggpairs <- 
+#   ggpairs(corrplot_data) +
+#   theme_bw()
 
 # transform variables to the factor type
 co2_stackplot <- transform(co2,Make=as.factor(Make),
@@ -131,10 +131,18 @@ individual_plot <-
 
 ############################################## 5. Model fitting
 
+# determining whether using log transmission
+density <-
+  ggplot(data=df1,aes(x=price_usd_log))+
+  geom_density(aes(color=factor(manufacturer_name)))+
+  coord_cartesian(xlim = c(5, 10.6),ylim=c(0,1))+
+  labs(title='Manufacturer Density Plot',x='log(price)',color='Manufacturer')+
+  my_theme2
 
 
 
-explore_fueltype <-
+# determining whether varying slope and intercept
+varying_fueltype <-
 ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
   geom_point(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),alpha=0.2)+
   geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=FuelType),se=F,method="lm")+
@@ -142,15 +150,7 @@ ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
   ylab("CO2 emissions")+
   theme(legend.position="right")
 
-explore_cylinders <-
-ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Cylinders=factor(Cylinders)))+
-  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),alpha=0.2)+
-  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Cylinders),se=F,method="lm")+
-  xlab("Fuel consumption combination")+
-  ylab("CO2 emissions")+
-  theme(legend.position="right")
-
-explore_transmission <-
+varing_transmission <-
 ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmission)))+
   geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),alpha=0.2)+
   geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),se=F,method="lm")+
