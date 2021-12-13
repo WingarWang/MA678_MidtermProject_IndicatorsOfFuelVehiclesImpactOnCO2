@@ -53,7 +53,7 @@ co2_combine <- co2_combine[order(co2_combine$Make),]
 
 ############################################## 3. Encode vehicle class
 
-# encode
+# encode vehicle class
 co2_VehicleClass <- data.frame(co2[["VehicleClass"]],
                        encode_ordinal(co2[["VehicleClass"]], 
                                       order = c("MINICOMPACT","SUBCOMPACT","COMPACT","MID-SIZE","FULL-SIZE","STATION WAGON - SMALL","STATION WAGON - MID-SIZE","TWO-SEATER","PICKUP TRUCK - SMALL","SUV - SMALL","PICKUP TRUCK - STANDARD","SUV - STANDARD","MINIVAN","VAN - CARGO","SPECIAL PURPOSE VEHICLE","VAN - PASSENGER")),
@@ -62,19 +62,34 @@ colnames(co2_VehicleClass)[1] <- "VehicleClass"
 colnames(co2_VehicleClass)[2] <- "VehicleClass_Value"
 co2_VehicleClass <- co2_VehicleClass[,-c(3)]
 
-# combine
+# combine two dataset
 co2_final <- cbind(co2, co2_VehicleClass[c("VehicleClass_Value")])
 
-# final data
-co2_final <- transform(co2,Make=as.factor(Make),
+# final data type
+co2_final <- transform(co2_final,Make=as.factor(Make),
                            Model=as.factor(Model),
                            VehicleClass=as.factor(VehicleClass),
-                           Transmission=as.factor(Transmission),
                            FuelType=as.factor(FuelType),
                            EngineSize=as.numeric(EngineSize),
                            Cylinders=as.numeric(Cylinders),
-                           CO2Emissions=as.numeric(CO2Emissions))
+                           CO2Emissions=as.numeric(CO2Emissions),
+                           Transmission=as.character(Transmission))
 
+# simplify transmission
+co2_final2 <- co2_final
+co2_final2$Transmission[co2_final2$Transmission=="A10"|co2_final2$Transmission =="A4"
+                        |co2_final2$Transmission=="A5"|co2_final2$Transmission=="A6"|co2_final2$Transmission=="A7"
+                        |co2_final2$Transmission=="A8"|co2_final2$Transmission=="A9"] <- "A"
+co2_final2$Transmission[co2_final2$Transmission == "AM5"|co2_final2$Transmission == "AM6"
+                        |co2_final2$Transmission == "AM7"|co2_final2$Transmission == "AM8"|co2_final2$Transmission == "AM9"] <- "AM"
+co2_final2$Transmission[co2_final2$Transmission == "AS10"|co2_final2$Transmission == "AS4"
+                        |co2_final2$Transmission == "AS5"|co2_final2$Transmission == "AS6"|co2_final2$Transmission == "AS7"
+                        |co2_final2$Transmission == "AS8"|co2_final2$Transmission == "AS9"] <- "AS"
+co2_final2$Transmission[co2_final2$Transmission == "AV"|co2_final2$Transmission == "AV10"
+                        |co2_final2$Transmission == "AV6"|co2_final2$Transmission == "AV7"|co2_final2$Transmission == "AV8"] <- "AV"
+co2_final2$Transmission[co2_final2$Transmission=="M5"|co2_final2$Transmission=="M6"
+                        |co2_final2$Transmission=="M7"] <- "M"
+co2_final2 <- transform(co2_final2,Transmission=as.factor(Transmission))
 
 ############################################## 4. Exploratory Data Analysis
 
@@ -129,17 +144,20 @@ individual_plot <-
   geom_smooth(method="lm",se=FALSE) +
   facet_wrap(~Make)
 
-############################################## 5. Model fitting
+############################################## 5. Model prepare
 
 # determining whether using log transmission
-density <-
-  ggplot(data=df1,aes(x=price_usd_log))+
-  geom_density(aes(color=factor(manufacturer_name)))+
-  coord_cartesian(xlim = c(5, 10.6),ylim=c(0,1))+
-  labs(title='Manufacturer Density Plot',x='log(price)',color='Manufacturer')+
-  my_theme2
+density_fueltype <-
+  ggplot(data=co2_final,aes(x=CO2Emissions))+
+  geom_density(aes(color=factor(FuelType)))+
+  labs(title='xxx',x='CO2Emissions',color='FuelType')+
+  geom_density(aes(x=CO2Emissions))
 
-
+density_fueltype_log <-
+  ggplot(data=co2_final,aes(x=log(CO2Emissions)))+
+  geom_density(aes(color=factor(FuelType)))+
+  labs(title='xxx',x='CO2Emissions',color='FuelType')+
+  geom_density(aes(x=log(CO2Emissions)))
 
 # determining whether varying slope and intercept
 varying_fueltype <-
@@ -151,20 +169,36 @@ ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
   theme(legend.position="right")
 
 varing_transmission <-
-ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmission)))+
+ggplot(data=co2_final2,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmission)))+
   geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),alpha=0.2)+
   geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),se=F,method="lm")+
   xlab("Fuel consumption combination")+
   ylab("CO2 emissions")+
   theme(legend.position="right")
 
+############################################## 6. Model fitting
+co2_final2 <- co2_final
 
+# use | not ||
+co2_final2$Transmission[co2_final2$Transmission=="A10"|co2_final2$Transmission =="A4"
+|co2_final2$Transmission=="A5"|co2_final2$Transmission=="A6"|co2_final2$Transmission=="A7"
+|co2_final2$Transmission=="A8"|co2_final2$Transmission=="A9"] <- "A"
 
+co2_final2$Transmission[co2_final2$Transmission == "AM5"|co2_final2$Transmission == "AM6"
+|co2_final2$Transmission == "AM7"|co2_final2$Transmission == "AM8"|co2_final2$Transmission == "AM9"] <- "AM"
 
+co2_final2$Transmission[co2_final2$Transmission == "AS10"|co2_final2$Transmission == "AS4"
+|co2_final2$Transmission == "AS5"|co2_final2$Transmission == "AS6"|co2_final2$Transmission == "AS7"
+|co2_final2$Transmission == "AS8"|co2_final2$Transmission == "AS9"] <- "AS"
 
+co2_final2$Transmission[co2_final2$Transmission == "AV"|co2_final2$Transmission == "AV10"
+|co2_final2$Transmission == "AV6"|co2_final2$Transmission == "AV7"|co2_final2$Transmission == "AV8"] <- "AV"
 
-############################################## 6. Model checking
+co2_final2$Transmission[co2_final2$Transmission=="M5"|co2_final2$Transmission=="M6"
+|co2_final2$Transmission=="M7"] <- "M"
 
+co2_final2 <- transform(co2_final2,Transmission=as.factor(Transmission))
+############################################## 7. Model checking
 
 
 

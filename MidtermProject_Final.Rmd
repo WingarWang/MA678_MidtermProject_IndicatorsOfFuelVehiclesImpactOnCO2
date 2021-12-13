@@ -85,44 +85,32 @@ xxx
 ### Model Fitting
 
 ```{r}
+# fit model
+model1 <- lmer(CO2Emissions ~ VehicleClass_Value + EngineSize + FC_Comb + (1+EngineSize|Transmission) + (1+FC_Comb|FuelType), data=co2_final)
 
+model2 <- lmer(log(CO2Emissions) ~ VehicleClass_Value + EngineSize + FC_Comb + (1+EngineSize|Transmission) + (1+FC_Comb|FuelType), data=co2_final2)
 
-```
+# estimate result
+summary(model)
 
-|Make                       
-|Model                       
-|VehicleClass                
-|EngineSize                      
-|Cylinders                    
-|Transmission            
-|FuelType                       
-|FC_City                      
-|FC_Hwy                       
-|FC_Comb         
-|CO2Emissions 
+# coefficient
+coef(model)
 
-```{r}
-model2 <- lmer(CO2Emissions ~ VehicleClass_Value+EngineSize+FC_Comb+(1|Transmission)+(1+FC_Comb|FuelType), data=co2_final)
+# fix effect
+fixef(model)
 
-summary(model2)
-summary(model2, 
-        pars = c("(Intercept)", "FC_Comb", "Cylinders"),
-        probs = c(0.025, 0.975),
-        digits = 2)
-
-fixef(model2)
-coef(model2)
+# random effect
 ranef(model)
 
-anova(model2)
 
-random_fueltype2 <- as.data.frame(ranef(model2)$FuelType)
-random_transmission2 <- as.data.frame(ranef(model2)$Transmission)
+
+random_fueltype <- as.data.frame(ranef(model2)$FuelType)
+random_transmission <- as.data.frame(ranef(model2)$Transmission)
 
 ```
 
 ```{r}
-
+anova(model)
 
 
 
@@ -150,7 +138,7 @@ rdfp1 <- plot_model(model,show.values = TRUE, value.offset = .3,vline.color = "b
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5))
 
-sjp.lmer(model, type = "rs.ri", vars = "c12hour", sample.n = 15)
+sjp.lmer(model1, type = "rs.ri", vars = "c12hour", sample.n = 15)
 
 
 #################
@@ -159,7 +147,7 @@ visual_ef <- REsim(model2)
 pp <- plotREsim(visual_ef)
 pp
 
-dotplot(ranef(model,condVar=TRUE))
+dotplot(ranef(model2,condVar=TRUE))
 
 
 #grid.arrange(,nrow=2)
@@ -180,17 +168,6 @@ sjp.glm(model)
 
 
 ```{r, echo=FALSE}
-
-
-#
-AIC(model0)
-BIC(model0)
-deviance(model0,REML=FALSE)
-AIC(model1)
-BIC(model1)
-deviance(model1,REML=FALSE)
-
-
 library("lmerTest")
 #install.packages("bruceR")
 library("bruceR")
@@ -233,9 +210,11 @@ xxx
 
 xxx
 
-## Citation
+## Reference
 
-xxx    
+https://stat.ethz.ch/~meier/teaching/anova/random-and-mixed-effects-models.html
+
+https://psych252.github.io/psych252book/linear-mixed-effects-models-2.html    
 
 \newpage
 ## Appendix
