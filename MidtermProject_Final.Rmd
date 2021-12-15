@@ -197,7 +197,7 @@ Vehicle size class, https://en.wikipedia.org/wiki/Vehicle_size_class
 
 ### More EDA
 
-```{r, fig.height=7, fig.width=14, fig.cap="Density of fuel type and transmission using original data and log data"}
+```{r, fig.height=7, fig.width=13, fig.cap="Density of fuel type and transmission using original data and log data"}
 grid.arrange(density_fueltype,density_fueltype_log,density_tramsmission,density_tramsmission_log,nrow=2)
 ```
 
@@ -209,18 +209,20 @@ individual_plot1
 stackplot7
 ```
 
-```{r, fig.height=5, fig.width=10, fig.cap="Different vehicle class vs. different transmission, cylinders and fuel type"}
-grid.arrange(stackplot4,stackplot5,stackplot6,nrow=1)
+```{r, fig.height=10, fig.width=15, fig.cap="Different vehicle class vs. different transmission, cylinders and fuel type"}
+grid.arrange(stackplot4,stackplot5,stackplot6,nrow=2)
 ```
+
+\newpage
 
 ### Model checking
 
-#### Residual plot and Q-Q plot
-
-```{r}
+```{r,fig.height=5, fig.width=10, fig.cap="residual plot and Q-Q plot"}
 # residual plot and Q-Q plot
 grid.arrange(re,qq,nrow=1)
 ```
+
+\newpage
 
 ## Model result
 
