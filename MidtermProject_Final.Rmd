@@ -11,7 +11,29 @@ output:
 ```{r setup, include=FALSE}
 # set up the environment
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, highlight=FALSE)
-knitr::opts_chunk$set(fig.width=6, fig.height=5,fig.align="center") 
+knitr::opts_chunk$set(fig.width=6, fig.height=5,fig.align="center")
+
+# Library
+pacman::p_load(ggplot2,
+               knitr,
+               arm,
+               dplyr,
+               stringr,
+               rstan,
+               rstanarm,
+               readr,
+               tidyverse,
+               hrbrthemes,
+               corrplot,
+               lme4,
+               lmerTest,
+               lattice,
+               gridExtra,
+               bruceR,
+               cleandata,
+               merTools,
+               sjPlot,
+               glmmTMB)
 ```
 
 ```{r}
@@ -19,28 +41,115 @@ knitr::opts_chunk$set(fig.width=6, fig.height=5,fig.align="center")
 source("MidtermProject_Draft.R")
 ```
 
-
 ## Abstract
 
-xxx 
+The purpose of this report is to explore the impact of various variables of fuel vehicles on vehicle emissions CO2. By finding indicators of low CO2 emissions, we can guide car companies to make more environmentally friendly cars. By establishing a multilevel model and analyzing fixed effect and random effect, I found that transmission: AS7, A5, fuel type: Z, X, and especially D are indicators of low CO2 emissions. Manufacturing engines with a smaller engine size under the a constant number of cylinders, choosing a car with a small fuel consumption per unit or with a small vehicle class can also reduce CO2 emissions, which helps companies contribute to our environment and establish good brands image to attract consumers.
 
 ## Introduction
 
-xxx
-https://www.kaggle.com/debajyotipodder/co2-emission-by-vehicles?select=CO2+Emissions_Canada.csv
-https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64/resource/026e45b4-eb63-451f-b34f-d9308ea3a3d9?inner_span=True
+The bigger the company, the more they care about their reputation and take on more social responsibilities. CO2 quantity is an important index to identify whether a car is “environmental friendly” or not. So in this project, I focus on finding what variables affect CO2 emission of cars. Finding greener parts can guide companies in developing cleaner cars. Also, a good reputation can attract consumers. For example, Tesla is using new energy vehicles as their selling point. In conclusion, I will fit multilevel models in order to find out the type of car that consumes less carbon dioxide. 
 
 ## Method
 
 ### Data Cleaning and Combining
 
-xxx
+My main dataset is about CO2 emissions of cars from Kaggle with different features, such as company, vehicle class, engine size, fuel type, transmission type, fuel consuption and so on. First, in order to perform EDA, I filtered and merged co2 emission of cars data set and Government of Canada's new energy vehicle data set, called co2_combine. Second, in order to perform model fitting, I encode the vehicle classes in the Kaggle data set from their names to their weights according to Wikipedia, so that this column of data can be fitted into the model, called co2_final. Third, for the convenience of more EDA data and observation, I categorized the 27 types of transmission into 5 categories, called co2_final2. The instructions for the above three steps are in the appendix.
+
+### Exploratory data analysis
+
+The left plot of figure 1 shows that the top 5 companies with the most data are BMW, CHEVROLET, FORD, MERCEDES-BENZ, and PORSCHE, so the final results of the model fitting have more reference value for these companies. In addition, the most frequently used transmission of the company is the AS type, followed by the A type and the M type. The right plot of figure 1 shows that companies like to make cars that use fuel X and fuel Z.
+
+```{r, fig.height=5, fig.width=10, fig.cap="Vehicle brands of different transmissons and fuel types"}
+grid.arrange(stackplot1,stackplot3,nrow=1)
+```
+
+```{r, fig.height=5, fig.width=10, fig.cap="Determining whether use varying slope and intercept"}
+grid.arrange(varying_fueltype,varing_transmission,nrow=1)
+```
+
+### Model Fitting
+
+In the fixed effect part, first, the size of VehicleClass_Value is related to CO2. Because the model of a car is closely related to its weight, the CO2 emissions released by different weights are different. Second, the size of the engine affects the driving performance of the car, making the release of co2 different. There is a variable called Cylinder in the data set, but we know that $V_{engine} = V_{cylinders} \cdot N_{cylinders}$. So we only choose EngineSize, because it is highly related to Cylinders. Third, fuel consumption must be related to the release of co2. Here I use FC_Comb, which is sensible because it’s defined as  55% of the fuel consumption on urban roads combined with 45% of the fuel consumption on highways.
+
+In the random effect part, first, the engine power is transmitted to the driving wheel through transmission. So engine size can be represented by transmission classification. Second, due to the different types of fuel, the fuel consumed by the car is different under other conditions. So FC_Comb can be represented by fuel type classification. According to the variables have different slopes and intercepts in figure 2 from the EDA part above, I choose varying slope and varying intercept.
+
+Finally, I compare the CO2Emissions density plots of FuelType or Transmission with log(CO2Emissions) density plots. The plots are in the More EDA part of Appendix. It can be seen that the original data has only a slight right deviation, and after the log, the data has not improved. So I chose to use the original CO2Emission. 
+
+```{r eval=FALSE, echo=TRUE}
+model1 <- lmer(CO2Emissions ~ VehicleClass_Value + EngineSize + FC_Comb 
+               + (1+EngineSize|Transmission) + (1+FC_Comb|FuelType),
+               data=co2_final)
+```
+
+## Result
+
+### Formula
+
+$$\begin{aligned}
+CO2Emissions=1.54 + 0.00007\cdot VehicleClassValue + 0.24\cdot EngineSize
++ 21.11\cdot FC_Comb + n_j + i_j +\epsilon \\
+n_j \sim N(0,\sigma^2_a), i_j \sim N(0,\sigma^2_b)
+\end{aligned}$$
+, where $n_j$ and $i_j$ are random effects: $(1+EngineSize|Transmission)$, $(1+FC_Comb|FuelType)$
+
+### Fixed effect
+
+|                |Estimate   |Std. Error   |df        |t value     |Pr(>&#124;t&#124;) |
+|-----           |-----      |-----        |-----      |-----      |-----              |    
+|(Intercept)        |1.538e+00  |8.064e-01 |2.804e+00   |1.907  |0.159011    
+|VehicleClass_Value |7.075e-05  |1.975e-05 |7.139e+03   |3.582  |0.000344 ***
+|EngineSize         |2.388e-01  |1.145e-01 |2.557e+01   |2.085  |0.047207 *  
+|FC_Comb            |2.111e+01  |2.092e+00 |3.997e+00   |10.088 |0.000545 ***
+
+### Random effect
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,highlight=FALSE,fig.height=7, fig.width=14, fig.cap="Random effect"}
+# random effect
+plot_model(model1,type="re",
+           show.values=TRUE,
+           value.offset=.2,
+           vline.color = "black",
+           facet.grid=FALSE,
+           sort.est = "sort.all")
+```
+
+\newpage
+
+## Discussion
+
+According to the fixed effect result, it can be seen that the three variables are all positively correlated with CO2Emissions and there p-values are all significant. For VehicleClass Value, increasing every 1 lb of vehicle weight, co2 will release 0.00007 more (in grams per kilometre). Because this coefficient is too small, it indicates that the model of the vehicle has a small impact on CO2 emissions. This result refutes people's inherent thinking that the larger the vehicle, the more CO2 released. For EngineSize, increasing every 1 Litre of engine, co2 will release 0.24 more (in grams per kilometre). The size of a car engine is usually closely related to the power of the engine. The power is large, the wheel speed increases, the car speed increases, and the release of co2 is also large. For FC_Comb, consuming every 1 L/100 km of fuel more, co2 will release 21.11 more (in grams per kilometre). This is in line with our common sense, because the combustion of fuel produces co2.
+
+According to the random effect result in varying slope, it doesn't show an overall significant difference between various engine size. But in detail, engine size of transmission AS6, AS10, A9, A6, A5, A4, A10 have true effect on slope. In contrast, FC_Comb of all fuel type have significant effect. According to the random effect result in varying intercept, transmission of AS7, AS6, AM7, A6 have true effect and all fuel type have true effect. 
+
+In conclusion, based on the goal is to find types with less CO2 emissions, in the transmission angle, select AS7, A5, meanwhile avoid AS8, AM7. In the fuel type angle, select Z, X, especially D, meanwhile avoid N, E. Moreover, according to the previous EDA, these results are more significative for BMW, CHEVROLET, FORD, MERCEDES-BENZ, PORSCHE, TOYOTA and GMC. This may be a rough result. But I believe this can give vehicle companies a reference significance. Choosing the appropriate transmission and fuel type, manufacturing engines with a smaller engine size under the condition of a constant number of cylinders, choosing a car with a small fuel consumption per unit or with a small vehicle class can reduce CO2 emissions and contribute to our environment, which can also establish a good brand image and deserve the support of consumers.
+
+## Limitation
+First, the p-value of intercept in the fixed effect part of the model is not significant. Maybe the variables given in the Kaggle data set I selected are still not sufficient, and the model can fit better. Second, the VehicleClass_Value I use is the maximum weight of each vehicle class. It would be more accurate if the weight of each vehicle class of each company and each model could be found, but it would be difficult to complete.
+
+## Reference
+
+CO2 Emission by Vehicles, https://www.kaggle.com/debajyotipodder/co2-emission-by-vehicles?select=CO2+Emissions_Canada.csv
+
+Fuel consumption ratings - Battery-electric vehicles 2012-2021 (2021-10-22), https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64/resource/026e45b4-eb63-451f-b34f-d9308ea3a3d9?inner_span=True
+
+Car classification, https://en.wikipedia.org/wiki/Car_classification
+
+Vehicle size class, https://en.wikipedia.org/wiki/Vehicle_size_class
+ 
+\newpage
+ 
+## Appendix
+
+### Explanation of variables
+
+#### Defination of variables
 
 |column names                     |explanation|
 |:--:                             |:-----|
 |Make                             |Company of the vehicle|
 |Model                            |Car Model|
 |VehicleClass                     |Class of vehicle depending on their utility, capacity and weight|
+|VehicleClass_Value               |The maxinum weight of each vehicle class in lb|
 |EngineSize                       |Size of engine used in Litre|
 |Cylinders                        |Number of cylinders|
 |Transmission                     |Transmission type with number of gears|
@@ -50,138 +159,84 @@ xxx
 |FC_Comb                          |The combined fuel consumption (55% city, 45% highway) in L/100 km|
 |CO2Emissions                     |The tailpipe emissions of carbon dioxide (in grams per kilometre) for combined city and highway driving|
 
-xxx
+#### Defination of vehicle class value
 
-### Exploratory Data Analysis
+|Vehicle Class              |Defination|
+|:--:                       |:-----|
+|(Sedans)
+|MINICOMPACT                |< 85 cubic feet (2,405 l)|
+|SUBCOMPACT                 |85–99.9 cubic feet (2,405–2,830 l)|
+|COMPACT                    |100–109.9 cubic feet (2,830–3,110 l)|
+|MID-SIZE                   |110–119.9 cubic feet (3,115–3,395 l)|
+|FULL-SIZE                  |≥ 120 cubic feet (3,400 l)|
+|(Station wagons)
+|STATION WAGON – SMALL      |< 130 cubic feet (3,680 l)|
+|STATION WAGON - MID-SIZE   |130–159 cubic feet (3,680–4,500 l)|
+|TWO-SEATER                 |Unknown. It is defined as Roadster or Sports car so I choose 4,500 l.|
+|(Trucks)
+|PICKUP TRUCK – SMALL       |<6,000 lb (2,700 kg)|
+|PICKUP TRUCK – STANDARD    |6,000–8,500 lb (2,700–3,850 kg)|
+|SUV – SMALL                |Sport utility vehicles(small) < 6,000 l (2,700 kg)|
+|SUV – STANDARD             |Sport utility vehicles(standard) 6,000–10,000 l (2,700–4,550 kg)|
+|MINIVAN                    |< 8,500 l (3,850 kg)|
+|VAN – CARGO                |< 8,500 l (3,850 kg)|
+|VAN – PASSENGER            |< 10,000 l (4,550 kg)|
+|SPECIAL PURPOSE VEHICLE    |< 8,500 l (3,850 kg)|
 
-xxx 
+\newpage
 
-```{r, fig.height=5, fig.width=10, fig.cap="xxx"}
-# variable "Make" barplot
-make_barplot
+#### Defination of transmission type
+
+|Transmission             |Defination|
+|:--:                     |:-----|
+|A                        |A4, A5, A6, A7, A8, A9, A10|
+|AM                       |AM5, AM6, AM7, AM8, AM9|
+|AS                       |AS4, AS5, AS6, AS7, AS8, AS9, AS10|
+|AV                       |AV, AV6, AV7, AV8, AV10|
+|M                        |M5, M6, M7|
+
+### More EDA
+
+```{r, fig.height=7, fig.width=14, fig.cap="Density of fuel type and transmission using original data and log data"}
+grid.arrange(density_fueltype,density_fueltype_log,density_tramsmission,density_tramsmission_log,nrow=2)
 ```
 
-xxx 
-
-```{r, fig.height=5, fig.width=10, fig.cap="xxx"}
-# "co2" boxplot
-co2_boxplot
+```{r, fig.height=5, fig.width=10, fig.cap="CO2 emission vs. fuel consumption of different companies"}
+individual_plot1
 ```
 
-xxx
-
-```{r, fig.height=7, fig.width=14, fig.cap="xxx"}
-# stack plot: VehicleClass, EngineSize, Cylinders, Transmission, FuelType 
-
+```{r, fig.height=5, fig.width=10, fig.cap="Different companies vs. different vehicle class"}
+stackplot7
 ```
 
-### Model Fitting
-
-```{r}
-
-# # estimate result
-# summary(model2)
-# 
-# # coefficient
-# coef(model)
-# 
-# # fix effect
-# fixef(model)
-# 
-# # random effect
-# ranef(model)
-# 
-# 
-# 
-# random_fueltype <- as.data.frame(ranef(model2)$FuelType)
-# random_transmission <- as.data.frame(ranef(model2)$Transmission)
-
+```{r, fig.height=5, fig.width=10, fig.cap="Different vehicle class vs. different transmission, cylinders and fuel type"}
+grid.arrange(stackplot4,stackplot5,stackplot6,nrow=1)
 ```
-
-
-
-
-
-
-
-
-
 
 ### Model checking
+
+#### Residual plot and Q-Q plot
+
+```{r}
+# residual plot and Q-Q plot
+grid.arrange(re,qq,nrow=1)
+```
+
+## Model result
+
+### Random effects result
+
+```{r}
+as.data.frame(fixef(model1))
+as.data.frame(ranef(model1)$FuelType)
+as.data.frame(ranef(model1)$Transmission)
+```
+
+### Full result
 
 ```{r}
 # full fitting model1 result
 HLM_summary(model1)
 ```
-
-```{r}
-# full fitting model2 result
-HLM_summary(model2)
-```
-
-```{r}
-# residual plot and Q-Q plot
-grid.arrange(re1,qq1,re2,qq2,nrow=2)
-```
-
-```{r}
-# random effect
-
-plot_model(model1,type="re",show.values=TRUE,value.offset=.2,vline.color = "black",facet.grid=FALSE,sort.est = "sort.all")
-
-plot_model(model2,type="re",show.values=TRUE,value.offset=.2,vline.color = "black",facet.grid=FALSE,sort.est = "sort.all")
-
-
-```
-
-
-
-
-xxx
-
-
-
-## Result
-
-## Model Coefficients
-
-xxx
-
-$$log(comments)= -12.70 + 0.77\cdot log(duration) + 0.32\cdot log(views) + 2.15\cdot log(numlang)$$
-
-xxx
-
-### Model Validation
-
-```{r}
-
-```
-
-   
-xxx
-
-## Discussion
-
-xxx
-
-
-
-
-
-## Reference
-
-https://stat.ethz.ch/~meier/teaching/anova/random-and-mixed-effects-models.html
-
-https://psych252.github.io/psych252book/linear-mixed-effects-models-2.html 
-
-https://www.r-bloggers.com/2020/02/a-guide-to-encoding-categorical-features-using-r/
-
-\newpage
-## Appendix
-
-
-
-
-
 
 

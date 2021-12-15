@@ -1,28 +1,4 @@
-############################################## 1. Set up
-
-# Library
-pacman::p_load(ggplot2,
-               knitr,
-               arm,
-               dplyr,
-               stringr,
-               rstan,
-               rstanarm,
-               readr,
-               tidyverse,
-               hrbrthemes,
-               corrplot,
-               lme4,
-               lmerTest,
-               lattice,
-               gridExtra,
-               bruceR,
-               cleandata,
-               merTools,
-               sjPlot,
-               glmmTMB)
-
-############################################## 2. Data Cleaning and Combining
+############################################## 1. Data Cleaning and Combining
 
 # Import two dataset
 co2 <- read.csv("CO2EmissionsCanada.csv", header = T)
@@ -55,7 +31,7 @@ identical(names(co2), names(battery))
 co2_combine <- rbind(co2,battery)
 co2_combine <- co2_combine[order(co2_combine$Make),]
 
-############################################## 3. Encode vehicle class
+############################################## 2. Encode vehicle class
 
 # Encode vehicle class
 co2_VehicleClass <- data.frame(co2[,3])
@@ -119,18 +95,18 @@ co2_final2$Transmission[co2_final2$Transmission=="M5"|co2_final2$Transmission=="
                         |co2_final2$Transmission=="M7"] <- "M"
 co2_final2 <- transform(co2_final2,Transmission=as.factor(Transmission))
 
-############################################## 4. Exploratory Data Analysis
+############################################## 3. Exploratory Data Analysis
 
-# Variable "Make" barplot
-make_data <- co2_combine %>% 
-             group_by(Make) %>% 
-             summarise(Count = n())
-
-make_barplot <-
-  ggplot(data=make_data, aes(x=Make, y=Count)) +
-  geom_bar(stat='identity', fill=rainbow(n=length(make_data$Count))) +
-  theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) +
-  labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
+# # Variable "Make" barplot
+# make_data <- co2_combine %>% 
+#              group_by(Make) %>% 
+#              summarise(Count = n())
+# 
+# make_barplot <-
+#   ggplot(data=make_data, aes(x=Make, y=Count)) +
+#   geom_bar(stat='identity', fill=rainbow(n=length(make_data$Count))) +
+#   theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) +
+#   labs(x="Brand", y="Amount of vehicle", title="The amount of vehicle in different brands")
 
 # Boxplot of co2
 co2_boxplot <-
@@ -140,7 +116,7 @@ co2_boxplot <-
   labs(x="Brand", y="CO2 emission", title="The CO2 emission of vehicle in different brands")
 
 # Transform variables to the factor type
-co2_stackplot <- transform(co2,Make=as.factor(Make),
+co2_stackplot <- transform(co2_final2,Make=as.factor(Make),
                        Model=as.factor(Model),
                        VehicleClass=as.factor(VehicleClass),
                        EngineSize=as.factor(EngineSize),
@@ -149,23 +125,79 @@ co2_stackplot <- transform(co2,Make=as.factor(Make),
                        FuelType=as.factor(FuelType),
                        CO2Emissions=as.numeric(CO2Emissions))
 
-# Stack plot
-stackplot <- co2_stackplot %>%
-             count(EngineSize,Cylinders)
+# Stack plot1
+stackplot_count1 <- co2_stackplot %>%
+  count(Make,Transmission)
+stackplot1 <-
+  ggplot(data=stackplot_count1) +
+  geom_col(aes(x=Make, y=n, fill=Transmission)) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5), plot.title=element_text(size=15)) 
 
-stackplot <-
-  ggplot(data=stackplot) +
-  geom_col(aes(x=Cylinders, y=n, fill=EngineSize)) 
+# # stack plot2
+# stackplot_count2 <- co2_stackplot %>%
+#   count(Make,Cylinders)
+# stackplot2 <-
+#   ggplot(data=stackplot_count2) +
+#   geom_col(aes(x=Make, y=n, fill=Cylinders)) +
+#   theme(axis.text.x=element_text(angle=90, vjust=0.5), plot.title=element_text(size=15)) 
 
-# Individual schools separately
-individual_plot <-
+# Stack plot3
+stackplot_count3 <- co2_stackplot %>%
+  count(Make,FuelType)
+stackplot3 <-
+  ggplot(data=stackplot_count3) +
+  geom_col(aes(x=Make, y=n, fill=FuelType)) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) 
+
+# stack plot4
+stackplot_count4 <- co2_stackplot %>%
+  count(VehicleClass,Transmission)
+stackplot4 <-
+  ggplot(data=stackplot_count4) +
+  geom_col(aes(x=VehicleClass, y=n, fill=Transmission)) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) 
+
+# stack plot5
+stackplot_count5 <- co2_stackplot %>%
+  count(VehicleClass,Cylinders)
+stackplot5 <-
+  ggplot(data=stackplot_count5) +
+  geom_col(aes(x=VehicleClass, y=n, fill=Cylinders)) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) 
+
+# Stack plot6
+stackplot_count6 <- co2_stackplot %>%
+  count(VehicleClass,FuelType)
+stackplot6 <-
+  ggplot(data=stackplot_count6) +
+  geom_col(aes(x=VehicleClass, y=n, fill=FuelType)) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.7), plot.title=element_text(size=15)) 
+
+# Stack plot7
+stackplot_count7 <- co2_stackplot %>%
+  count(Make,VehicleClass)
+stackplot7 <-
+  ggplot(data=stackplot_count7) +
+  geom_col(aes(x=Make, y=n, fill=VehicleClass)) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5), plot.title=element_text(size=15))
+
+# Individual schools separately1
+individual_plot1 <-
   ggplot(co2_combine) +
   geom_point() +
   aes(x=FC_Comb,y=CO2Emissions,color=factor(Make)) +
   geom_smooth(method="lm",se=FALSE) +
   facet_wrap(~Make)
 
-############################################## 5. Model prepare
+# # Individual schools separately2
+# individual_plot2 <-
+#   ggplot(co2_combine) +
+#   geom_point() +
+#   aes(x=FC_Comb,y=CO2Emissions,color=factor(Cylinders)) +
+#   geom_smooth(method="lm",se=FALSE) +
+#   facet_wrap(~Cylinders)
+
+############################################## 4. Model prepare
 
 # Determining whether using log transmission
 density_fueltype <-
@@ -180,6 +212,18 @@ density_fueltype_log <-
   labs(title='xxx',x='CO2Emissions',color='FuelType')+
   geom_density(aes(x=log(CO2Emissions)))
 
+density_tramsmission <-
+  ggplot(data=co2_final,aes(x=CO2Emissions))+
+  geom_density(aes(color=factor(Transmission)))+
+  labs(title='xxx',x='CO2Emissions',color='Transmission')+
+  geom_density(aes(x=CO2Emissions))
+
+density_tramsmission_log <-
+  ggplot(data=co2_final,aes(x=log(CO2Emissions)))+
+  geom_density(aes(color=factor(Transmission)))+
+  labs(title='xxx',x='CO2Emissions',color='Transmission')+
+  geom_density(aes(x=log(CO2Emissions)))
+
 # Determining whether varying slope and intercept
 varying_fueltype <-
 ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
@@ -190,32 +234,34 @@ ggplot(data=co2_final,aes(y=CO2Emissions,x=FC_Comb,FuelType=factor(FuelType)))+
   theme(legend.position="right")
 
 varing_transmission <-
-ggplot(data=co2_final2,aes(y=CO2Emissions,x=FC_Comb,Transmission=factor(Transmission)))+
-  geom_point(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),alpha=0.2)+
-  geom_smooth(aes(y=CO2Emissions,x=FC_Comb,color=Transmission),se=F,method="lm")+
-  xlab("Fuel consumption combination")+
+ggplot(data=co2_final,aes(y=CO2Emissions,x=EngineSize,Transmission=factor(Transmission)))+
+  geom_point(aes(y=CO2Emissions,x=EngineSize,color=Transmission),alpha=0.2)+
+  geom_smooth(aes(y=CO2Emissions,x=EngineSize,color=Transmission),se=F,method="lm")+
+  xlab("Engine size")+
   ylab("CO2 emissions")+
   theme(legend.position="right")
 
-############################################## 6. Model fitting
+############################################## 5. Model fitting
 
 # Fit model1
 model1 <- lmer(CO2Emissions ~ VehicleClass_Value + EngineSize + FC_Comb + (1+EngineSize|Transmission) + (1+FC_Comb|FuelType), data=co2_final)
 
 # Fit model2
-model2 <- lmer(log(CO2Emissions) ~ VehicleClass_Value + EngineSize + FC_Comb + (1+EngineSize|Transmission) + (1+FC_Comb|FuelType), data=co2_final2)
+# model2 <- lmer(log(CO2Emissions) ~ VehicleClass_Value + EngineSize + FC_Comb + (1+EngineSize|Transmission) + (1+FC_Comb|FuelType), data=co2_final2)
 
-############################################## 7. Model checking
+# summary(model1)
+
+# coef(model1)
+
+# fixef(model1)
+
+# ranef(model1)
+
+############################################## 6. Model checking
 
 # Residual plot and Q-Q plot
-re1 <- plot(model1)
-re2 <- plot(model2)
-qq1 <- qqmath(model1)
-qq2 <- qqmath(model2)
-
-
-
-
+re <- plot(model1)
+qq <- qqmath(model1)
 
 
 
