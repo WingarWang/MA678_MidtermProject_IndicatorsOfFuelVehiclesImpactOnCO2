@@ -209,7 +209,7 @@ individual_plot1
 stackplot7
 ```
 
-```{r, fig.height=10, fig.width=15, fig.cap="Different vehicle class vs. different transmission, cylinders and fuel type"}
+```{r, fig.height=18, fig.width=18, fig.cap="Different vehicle class vs. different transmission, cylinders and fuel type"}
 grid.arrange(stackplot4,stackplot5,stackplot6,nrow=2)
 ```
 
@@ -221,8 +221,6 @@ grid.arrange(stackplot4,stackplot5,stackplot6,nrow=2)
 # residual plot and Q-Q plot
 grid.arrange(re,qq,nrow=1)
 ```
-
-\newpage
 
 ## Model result
 
